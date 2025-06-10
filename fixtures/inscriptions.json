@@ -1,0 +1,163 @@
+[
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 1,
+    "fields": {
+      "nombre": "Pago en efectivo",
+      "descripcion": "Pago físico realizado en recepción",
+      "esta_activo": true,
+      "codigo_integracion": null,
+      "requiere_confirmacion_manual": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 2,
+    "fields": {
+      "nombre": "Transferencia bancaria directa (SPEI)",
+      "descripcion": "Pago por CLABE o cuenta",
+      "esta_activo": true,
+      "codigo_integracion": "spei",
+      "requiere_confirmacion_manual": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 3,
+    "fields": {
+      "nombre": "Tarjeta de crédito (terminal física)",
+      "descripcion": "Pago en punto de venta con terminal",
+      "esta_activo": true,
+      "codigo_integracion": "terminal",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 4,
+    "fields": {
+      "nombre": "Stripe",
+      "descripcion": "Pago en línea con tarjeta",
+      "esta_activo": true,
+      "codigo_integracion": "stripe",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 5,
+    "fields": {
+      "nombre": "Tarjeta de débito",
+      "descripcion": "Pago con tarjeta de débito física o virtual",
+      "esta_activo": true,
+      "codigo_integracion": "debito",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 6,
+    "fields": {
+      "nombre": "Mercado Pago",
+      "descripcion": "Pago en línea vía Mercado Pago",
+      "esta_activo": true,
+      "codigo_integracion": "mercado_pago",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 7,
+    "fields": {
+      "nombre": "Pago con CoDi",
+      "descripcion": "Pago escaneando QR desde app bancaria",
+      "esta_activo": true,
+      "codigo_integracion": "codi",
+      "requiere_confirmacion_manual": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 8,
+    "fields": {
+      "nombre": "Paypal",
+      "descripcion": "Pago en línea con cuenta de Paypal",
+      "esta_activo": true,
+      "codigo_integracion": "paypal",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.metodopago",
+    "pk": 9,
+    "fields": {
+      "nombre": "Pago recurrente vía plataforma",
+      "descripcion": "Cargos automáticos con Stripe, MercadoPago, etc.",
+      "esta_activo": true,
+      "codigo_integracion": "recurrente",
+      "requiere_confirmacion_manual": false,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.tipoinscripcion",
+    "pk": 1,
+    "fields": {
+      "nombre": "CrossFit",
+      "descripcion": "Acceso completo a clases de CrossFit",
+      "esta_activo": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.tipoinscripcion",
+    "pk": 2,
+    "fields": {
+      "nombre": "BJJ",
+      "descripcion": "Acceso completo a clases de BJJ",
+      "esta_activo": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.tipoinscripcion",
+    "pk": 3,
+    "fields": {
+      "nombre": "CrossFit + BJJ",
+      "descripcion": "Acceso total a ambas disciplinas",
+      "esta_activo": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "inscriptions.tipoinscripcion",
+    "pk": 4,
+    "fields": {
+      "nombre": "BJJ Kids",
+      "descripcion": "Programa especial para niñ@s",
+      "esta_activo": true,
+      "fecha_creacion": "2025-01-01T12:00:00Z",
+      "fecha_actualizacion": "2025-01-01T12:00:00Z"
+    }
+  }
+]

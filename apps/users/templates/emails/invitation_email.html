@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Invitación a Evolve</title>
+</head>
+<body style="font-family: Arial, sans-serif;">
+  <h2>¡Hola!</h2>
+
+  <p>Has sido invitado a unirte a <strong>Evolve Training Center</strong> 🥋💪</p>
+
+  <p>Para completar tu registro y activar tu cuenta, por favor haz clic en el siguiente botón:</p>
+
+  <br>
+  <p>
+    <a href="{{ registro_url }}" style="padding: 12px 20px; background-color: #28a745; color: #fff; text-decoration: none; border-radius: 5px;">
+      Completar registro
+    </a>
+  </p>
+  <br>
+
+  <p>Este enlace es válido hasta el {{ invitacion.fecha_expiracion|date:"d/m/Y H:i" }}.</p>
+
+  <p>Si no esperabas este correo, puedes ignorarlo.</p>
+
+  <br>
+  <p>¡Te esperamos pronto en Evolve!<br>
+  El equipo de Evolve Training Center</p>
+</body>
+</html>

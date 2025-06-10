@@ -1,0 +1,114 @@
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+    /** Reset para REMS - 62.5% = 10px de 16px **/
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.6rem;
+    line-height: 2;
+
+    background-image: url('../img/bg_2.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+
+/* Global */
+
+img {
+    max-width: 100%;
+}
+
+.contenedor {
+    max-width: 120rem;
+    margin: 0 auto 0 auto;
+}
+
+h1 {
+    font-size: 3.8rem;
+}
+
+h2 {
+    font-size: 3.4rem;
+}
+
+h3 {
+    font-size: 3rem;
+}
+
+h4 {
+    font-size: 2.6rem;
+}
+
+h1,h2{
+    color: white;;
+}
+
+
+/* Utilidades */
+.seccion {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.fw-700 {
+    font-weight: 700;
+}
+.fw-900 {
+    font-weight: 900;
+}
+.centrar-texto {
+    text-align: center;
+}
+
+
+/* Botones */
+.boton {
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.8rem;
+    padding: 1rem 3rem;
+    margin: 2rem 0;
+    display: inline-block;
+    text-align: center;
+    border: none;
+    width: auto;
+    border-radius: 15px;
+}
+.boton-azul{
+    background-color: #00AEEF;
+}
+.boton-azul:hover {
+    cursor: pointer;
+    background-color: #4eb6fb;
+}
+.ver-todas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@media (min-width: 768px) {
+    .ver-todas{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 2rem;
+    }    
+}
+
+/* Fieldset */
+.form {
+    margin: 0 2rem;
+}
+legend {
+    font-size: 2rem;
+    color: white;
+}

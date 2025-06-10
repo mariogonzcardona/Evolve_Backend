@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Django Rest Framework</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <link href="{% static 'core/css/normalize.css' %}" rel="stylesheet">
+    <link href="{% static 'core/css/styles.css' %}" rel="stylesheet">
+
+    <!-- Icono -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.ico' %}"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'core/img/python.ico' %}" />
+
+</head>
+
+<body>
+
+    <h1 class="fw-900 centrar-texto">Django Rest Framework</h1>
+
+    <!-- Main -->
+    <main class="contenedor seccion contenido-centrado">
+        <h2 class="fw-900 centrar-texto">Choose Docs Link</h2>
+        <form class="form" action="">
+            <!-- Django Production -->
+            <fieldset>
+                <legend> Django Production </legend>
+                <div class="ver-todas">
+                    <a href="{% url 'schema-swagger-ui' %}" target="_blank" class="boton boton-azul">Docs Swagger</a>
+                    <a href="/admin/" target="_blank" class="boton boton-azul">Admin Django</a>
+                </div>
+            </fieldset>
+        </form>
+    </main>
+    <!-- Fin Main -->
+</body>
+
+</html>
