@@ -1,28 +1,23 @@
-import uuid
+from uuid import uuid4
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from .managers.CustomUserManager import CustomUserManager
 
-GENERO_CHOICES = [('M', 'Masculino'), ('F', 'Femenino'), ('O', 'Otro')]
-ROLE_CHOICES = [('admin', 'Administrador'), ('coach', 'Coach'), ('athlete', 'Atleta')]
+from .managers.UsuarioBaseManager import UsuarioBaseManager
+from apps.users.enums import UserRoles, UserGender,InvitationMethod,UserStatus
+from apps.filiales.models import Filial
 
 class Persona(models.Model):
     email = models.EmailField(unique=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
-    alias = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        help_text="Nombre con el que la persona prefiere ser llamada"
-    )
+    alias = models.CharField(max_length=50, blank=True, null=True)
     fecha_nacimiento = models.DateField()
-    genero = models.CharField(max_length=1, choices=GENERO_CHOICES)
+    genero = models.CharField(max_length=1, choices=UserGender.CHOICES, default=UserGender.Hombre)
     padecimientos_medicos = models.TextField(blank=True, null=True)
     telefono_personal = models.CharField(max_length=20)
     telefono_emergencia = models.CharField(max_length=20)
-    foto_perfil = models.ImageField(upload_to='perfiles/', blank=True, null=True,default='perfiles/default.jpg')
+    foto_perfil = models.ImageField(upload_to='perfiles/', blank=True, null=True, default='perfiles/default.jpg')
 
     # Dirección
     estado = models.CharField(max_length=50)
@@ -34,23 +29,22 @@ class Persona(models.Model):
 
     # Permisos y rol general
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='athlete')
+    is_staff = models.BooleanField(default=False)  # Solo superadmin será staff
+    role = models.CharField(max_length=20, choices=UserRoles.CHOICES, default=UserRoles.ATHLETE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
-class CustomUser(AbstractBaseUser, PermissionsMixin, Persona):
-    
+class UsuarioBase(AbstractBaseUser, PermissionsMixin, Persona):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nombre', 'apellido']
 
-    objects = CustomUserManager()
+    objects = UsuarioBaseManager()
 
     class Meta:
-        db_table = 'users_customuser'
+        db_table = 'usuarios_usuario'
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
         ordering = ['nombre', 'apellido']
@@ -58,14 +52,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, Persona):
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
-    def save(self, *args, **kwargs):
-        if self.role == 'admin':
-            self.is_staff = True
-        super().save(*args, **kwargs)
-
 class Cliente(models.Model):
-    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='cliente')
-
+    usuario = models.OneToOneField(UsuarioBase, on_delete=models.CASCADE, related_name='cliente')
+    filial = models.ForeignKey(Filial, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=20,choices=UserStatus.CHOICES,default=UserStatus.ACTIVE,help_text="Estado comercial del cliente")
+    
     class Meta:
         db_table = 'usuarios_cliente'
         verbose_name = 'Cliente'
@@ -76,16 +67,17 @@ class Cliente(models.Model):
         return f"Cliente: {self.usuario.nombre} {self.usuario.apellido}"
 
 class Empleado(models.Model):
-    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='empleado')
+    usuario = models.OneToOneField(UsuarioBase, on_delete=models.CASCADE, related_name='empleado')
+    filial = models.ForeignKey(Filial, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_contratacion = models.DateField()
     especialidad = models.CharField(max_length=100, blank=True, null=True)
     salario = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    certificaciones = models.TextField(blank=True, null=True, help_text="Certificaciones relevantes del empleado")
-    tipo_contrato = models.CharField(max_length=50, blank=True, null=True, help_text="Ej. Tiempo completo, medio tiempo")
-    activo = models.BooleanField(default=True)
+    certificaciones = models.TextField(blank=True, null=True)
+    tipo_contrato = models.CharField(max_length=50, blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-
+    status = models.CharField(max_length=20,choices=UserStatus.CHOICES,default=UserStatus.ACTIVE,help_text="Estado comercial del empleado")
+    
     class Meta:
         db_table = 'usuarios_empleado'
         verbose_name = 'Empleado'
@@ -96,53 +88,29 @@ class Empleado(models.Model):
         return f"Empleado: {self.usuario.nombre} {self.usuario.apellido}"
 
 class UserInvitation(models.Model):
-    email = models.EmailField(unique=True, help_text="Correo electrónico del invitado")
-    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    email = models.EmailField(unique=True)
+    token = models.UUIDField(default=uuid4, unique=True, editable=False)
 
-    enviado_por = models.ForeignKey(
-        CustomUser,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='invitaciones_enviadas',
-        help_text="Admin o coach que envió la invitación"
-    )
-
+    enviado_por = models.ForeignKey(UsuarioBase,on_delete=models.SET_NULL,null=True,blank=True,related_name='invitaciones_enviadas')
     fecha_envio = models.DateTimeField(auto_now_add=True)
-    fecha_expiracion = models.DateTimeField(
-        help_text="Fecha límite para que la persona complete el registro"
-    )
-
+    fecha_expiracion = models.DateTimeField()
     fue_usado = models.BooleanField(default=False)
-
-    medio_envio = models.CharField(
-        max_length=20,
-        choices=[
-            ('email', 'Correo electrónico'),
-            ('whatsapp', 'WhatsApp'),
-            ('ambos', 'Ambos')
-        ],
-        default='email',
-        help_text="Medio por el cual se envió la invitación"
-    )
-
-    telefono = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        help_text="Número de teléfono si se envió vía WhatsApp"
-    )
-
+    medio_envio= models.CharField(max_length=20,choices=InvitationMethod.CHOICES,default=InvitationMethod.EMAIL)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
 
+    role = models.CharField(max_length=20, choices=UserRoles.CHOICES, default=UserRoles.ATHLETE)
+    filial = models.ForeignKey(Filial, on_delete=models.SET_NULL, null=True, blank=True)
+    
     class Meta:
-        db_table = 'users_invitaciones'
+        db_table = 'usuarios_invitacion'
         verbose_name = 'Invitación de usuario'
         verbose_name_plural = 'Invitaciones de usuarios'
         ordering = ['-fecha_envio']
 
     def __str__(self):
-        return f"Invitación a {self.email} ({'usada' if self.fue_usado else 'pendiente'})"
+        estado = "usada" if self.fue_usado else "pendiente"
+        return f"Invitación a {self.email} ({estado})"
 
     def is_expired(self):
         return timezone.now() > self.fecha_expiracion

@@ -1,7 +1,7 @@
 
 import pytest
 from rest_framework.test import APIClient
-from apps.users.models import CustomUser
+from apps.users.models import UsuarioBase
 
 @pytest.fixture
 def api_client():
@@ -9,7 +9,7 @@ def api_client():
 
 @pytest.fixture
 def create_users(db):
-    admin = CustomUser.objects.create_user(
+    admin = UsuarioBase.objects.create_user(
         email='admin@example.com',
         password='adminpass',
         nombre='Admin',
@@ -24,7 +24,7 @@ def create_users(db):
         role='admin',
         is_staff=True
     )
-    coach = CustomUser.objects.create_user(
+    coach = UsuarioBase.objects.create_user(
         email='coach@example.com',
         password='coachpass',
         nombre='Coach',
@@ -38,7 +38,7 @@ def create_users(db):
         telefono_emergencia='8888888888',
         role='coach'
     )
-    athlete = CustomUser.objects.create_user(
+    athlete = UsuarioBase.objects.create_user(
         email='athlete@example.com',
         password='athletepass',
         nombre='Athlete',
@@ -52,7 +52,7 @@ def create_users(db):
         telefono_emergencia='7777777777',
         role='athlete'
     )
-    CustomUser.objects.create_user(
+    UsuarioBase.objects.create_user(
         email='athlete2@example.com',
         password='athletepass',
         nombre='Athlete2',

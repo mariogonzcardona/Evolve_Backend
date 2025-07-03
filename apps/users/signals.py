@@ -1,16 +1,16 @@
 import os
 from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
-from .models import CustomUser
+from .models import UsuarioBase
 
-@receiver(pre_save, sender=CustomUser)
+@receiver(pre_save, sender=UsuarioBase)
 def delete_old_profile_picture(sender, instance, **kwargs):
     if not instance.pk:
         return  # Usuario nuevo
 
     try:
-        old_instance = CustomUser.objects.get(pk=instance.pk)
-    except CustomUser.DoesNotExist:
+        old_instance = UsuarioBase.objects.get(pk=instance.pk)
+    except UsuarioBase.DoesNotExist:
         return
 
     old_file = old_instance.foto_perfil
@@ -23,7 +23,7 @@ def delete_old_profile_picture(sender, instance, **kwargs):
         except Exception:
             pass
 
-@receiver(post_delete, sender=CustomUser)
+@receiver(post_delete, sender=UsuarioBase)
 def delete_profile_picture_on_delete(sender, instance, **kwargs):
     file = instance.foto_perfil
     if file:

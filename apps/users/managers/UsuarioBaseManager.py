@@ -1,6 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
 
-class CustomUserManager(BaseUserManager):
+class UsuarioBaseManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         """
         Crea y guarda un usuario con el correo y contraseña proporcionados.

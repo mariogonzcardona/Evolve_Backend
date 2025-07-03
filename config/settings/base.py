@@ -26,10 +26,8 @@ INSTALLED_APPS = [
     # Local apps
     'apps.users',
     'apps.inscriptions',
-    'apps.finances',
-    'apps.inventory',
-    'apps.wod',
     'apps.core',
+    'apps.filiales',
 
     # Third party apps
     'drf_yasg',
@@ -159,7 +157,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.UsuarioBase'
 
 
 # Valores de configuracion para el envio de correos electronicos

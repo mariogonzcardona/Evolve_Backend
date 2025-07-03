@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Empleado, Cliente
+from .models import UsuarioBase, Empleado, Cliente
 
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
+@admin.register(UsuarioBase)
+class UsuarioBaseAdmin(UserAdmin):
+    model = UsuarioBase
     list_display = ('id', 'email', 'nombre', 'apellido', 'role', 'is_active')
     ordering = ('email',)
     search_fields = ('email', 'nombre', 'apellido')
@@ -42,8 +42,14 @@ class CustomUserAdmin(UserAdmin):
 class EmpleadoAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'fecha_contratacion', 'especialidad', 'salario')
     search_fields = ('usuario__nombre', 'usuario__apellido', 'especialidad')
+    fields = (
+        'usuario', 'filial', 'fecha_contratacion', 'especialidad', 'salario',
+        'certificaciones', 'tipo_contrato', 'status'
+    )
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('usuario',)
-    search_fields = ('usuario__nombre', 'usuario__apellido')
+    list_display = ('usuario', 'filial', 'status')
+    search_fields = ('usuario__nombre', 'usuario__apellido', 'filial__nombre')
+    list_filter = ('filial', 'status')
+    fields = ('usuario', 'filial', 'status')

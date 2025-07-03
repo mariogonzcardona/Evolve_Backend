@@ -5,5 +5,5 @@ app_name = 'inscripciones'
 
 urlpatterns = [
     # Incluir todas las URLs del router
-    path('', include((router.urls, 'inscripciones'))),
-] 
+    # path('', include((router.urls, 'inscripciones'))),
+]  

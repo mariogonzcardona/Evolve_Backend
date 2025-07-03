@@ -1,67 +1,73 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from apps.users.enums import UserRoles
 
-# --------------------------------------------------------
-# 🔐 Clase base reutilizable: HasRole
-# --------------------------------------------------------
-class HasRole(BasePermission):
+
+class HasAnyRole(BasePermission):
     """
-    Permite acceso solo a usuarios con un rol específico.
+    Permite acceso a usuarios autenticados con alguno de los roles permitidos.
 
-    Se debe heredar y definir la lista de roles permitidos en la variable 'allowed_roles'.
+    Esta versión permite definir los roles permitidos en la vista usando: `allowed_roles = [...]`
     """
-    allowed_roles = []
-
     def has_permission(self, request, view):
         return (
             request.user and
             request.user.is_authenticated and
-            request.user.role in self.allowed_roles
+            hasattr(view, 'allowed_roles') and
+            request.user.role in view.allowed_roles
         )
 
 
-# --------------------------------------------------------
-# 🔐 Permisos específicos basados en HasRole
-# --------------------------------------------------------
-
-class IsAdminUser(HasRole):
-    """Permite acceso solo a usuarios con rol 'admin'."""
-    allowed_roles = ['admin']
-
-class IsCoachUser(HasRole):
-    """Permite acceso solo a usuarios con rol 'coach'."""
-    allowed_roles = ['coach']
-
-class IsAthleteUser(HasRole):
-    """Permite acceso solo a usuarios con rol 'athlete'."""
-    allowed_roles = ['athlete']
-
-class IsCoachOrAdmin(HasRole):
-    """Permite acceso a usuarios con rol 'coach' o 'admin'."""
-    allowed_roles = ['coach', 'admin']
-
-
-# --------------------------------------------------------
-# 🔐 Permiso combinado: lectura libre, escritura solo admin
-# --------------------------------------------------------
-
-class IsAdminOrReadOnly(BasePermission):
+class IsSelfOrBusinessRole(BasePermission):
     """
-    Permite lectura (GET, HEAD, OPTIONS) a cualquier usuario autenticado.
-    Solo los usuarios con rol 'admin' pueden crear, actualizar o eliminar.
+    Permite acceso si el usuario es el mismo que el objeto,
+    o si tiene un rol operativo en el negocio.
+    Excluye superadmin.
     """
-    def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return request.user and request.user.is_authenticated
-        return request.user and request.user.is_authenticated and request.user.role == 'admin'
+    business_roles = [
+        UserRoles.BUSINESS_OWNER,
+        UserRoles.ADMIN,
+        UserRoles.COACH,
+    ]
 
-
-# --------------------------------------------------------
-# 🔐 Permiso basado en el objeto accedido
-# --------------------------------------------------------
-
-class IsSelfOrAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        return request.user.role == 'admin' or obj == request.user
+        return (
+            obj == request.user or
+            request.user.role in self.business_roles
+        )
+
+
+class IsBusinessRoleOrReadOnly(BasePermission):
+    """
+    Permite lectura a usuarios autenticados,
+    y escritura solo a roles del negocio (excluye superadmin).
+    El rol athlete también puede acceder a datos públicos si están autenticados.
+    """
+    business_roles = [
+        UserRoles.BUSINESS_OWNER,
+        UserRoles.ADMIN,
+        UserRoles.COACH,
+    ]
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return request.user and request.user.is_authenticated
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role in self.business_roles
+        )
+
+
+class IsSelfOnly(BasePermission):
+    """
+    Permite modificar solo su propio objeto.
+    Ideal para vistas específicas de atletas.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user

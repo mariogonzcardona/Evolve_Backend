@@ -28,7 +28,7 @@ urlpatterns = [
     
     # Paths de la API
     path('api/v1/', include(('apps.users.urls', 'users'), namespace='users')),  # Incluir todas las rutas de users
-    path('api/v1/', include('apps.inscriptions.urls')), 
+    # path('api/v1/', include('apps.inscriptions.urls')), 
     
     # Paths de la API
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
