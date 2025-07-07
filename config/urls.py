@@ -27,7 +27,8 @@ urlpatterns = [
     path("", include("apps.core.urls")),
     
     # Paths de la API
-    path('api/v1/', include(('apps.users.urls', 'users'), namespace='users')),  # Incluir todas las rutas de users
+    path('api/v1/', include(('apps.users.urls', 'users'), namespace='users')),
+    path('api/v1/', include(('apps.eventos.urls', 'eventos'), namespace='eventos')),
     # path('api/v1/', include('apps.inscriptions.urls')), 
     
     # Paths de la API

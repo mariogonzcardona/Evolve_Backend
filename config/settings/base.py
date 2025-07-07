@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'apps.inscriptions',
     'apps.core',
     'apps.filiales',
+    'apps.eventos',
 
     # Third party apps
     'drf_yasg',
