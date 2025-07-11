@@ -12,6 +12,7 @@ python manage.py makemigrations
 python manage.py collectstatic --noinput
 
 python manage.py loaddata fixtures/users_data.json
+python manage.py loaddata fixtures/nacionalidades.json
 # python manage.py loaddata fixtures/inscriptions.json
 
 # 💡 Si estás corriendo pruebas, sal del script aquí

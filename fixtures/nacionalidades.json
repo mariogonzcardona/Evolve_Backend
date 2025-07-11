@@ -1,0 +1,82 @@
+[
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 1,
+    "fields": {
+      "nombre": "México",
+      "codigo_iso": "mx"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 2,
+    "fields": {
+      "nombre": "Estados Unidos",
+      "codigo_iso": "us"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 3,
+    "fields": {
+      "nombre": "Canadá",
+      "codigo_iso": "ca"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 4,
+    "fields": {
+      "nombre": "Brasil",
+      "codigo_iso": "br"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 5,
+    "fields": {
+      "nombre": "Argentina",
+      "codigo_iso": "ar"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 6,
+    "fields": {
+      "nombre": "España",
+      "codigo_iso": "es"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 7,
+    "fields": {
+      "nombre": "Francia",
+      "codigo_iso": "fr"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 8,
+    "fields": {
+      "nombre": "Alemania",
+      "codigo_iso": "de"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 9,
+    "fields": {
+      "nombre": "Italia",
+      "codigo_iso": "it"
+    }
+  },
+  {
+    "model": "eventos.nacionalidad",
+    "pk": 10,
+    "fields": {
+      "nombre": "Japón",
+      "codigo_iso": "jp"
+    }
+  }
+]

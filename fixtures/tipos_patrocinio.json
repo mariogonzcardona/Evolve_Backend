@@ -1,0 +1,38 @@
+[
+  {
+    "model": "eventos.tipopatrocinio",
+    "pk": 1,
+    "fields": {
+      "clave": "economico",
+      "descripcion": "Patrocinio económico",
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipopatrocinio",
+    "pk": 2,
+    "fields": {
+      "clave": "donacion",
+      "descripcion": "Donación de productos o servicios",
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipopatrocinio",
+    "pk": 3,
+    "fields": {
+      "clave": "publicidad",
+      "descripcion": "Publicidad en redes sociales",
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipopatrocinio",
+    "pk": 4,
+    "fields": {
+      "clave": "stand",
+      "descripcion": "Stand de marca en el evento",
+      "activo": true
+    }
+  }
+]

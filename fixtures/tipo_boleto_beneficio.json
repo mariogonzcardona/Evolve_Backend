@@ -1,0 +1,146 @@
+[
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 1,
+    "fields": {
+      "tipo_boleto": 1,
+      "beneficio": 1,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 2,
+    "fields": {
+      "tipo_boleto": 1,
+      "beneficio": 10,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 3,
+    "fields": {
+      "tipo_boleto": 1,
+      "beneficio": 6,
+      "activo": false
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 4,
+    "fields": {
+      "tipo_boleto": 1,
+      "beneficio": 12,
+      "activo": false
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 5,
+    "fields": {
+      "tipo_boleto": 2,
+      "beneficio": 3,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 6,
+    "fields": {
+      "tipo_boleto": 2,
+      "beneficio": 11,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 7,
+    "fields": {
+      "tipo_boleto": 2,
+      "beneficio": 2,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 8,
+    "fields": {
+      "tipo_boleto": 2,
+      "beneficio": 6,
+      "activo": false
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 9,
+    "fields": {
+      "tipo_boleto": 3,
+      "beneficio": 8,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 10,
+    "fields": {
+      "tipo_boleto": 3,
+      "beneficio": 12,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 11,
+    "fields": {
+      "tipo_boleto": 3,
+      "beneficio": 7,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 12,
+    "fields": {
+      "tipo_boleto": 3,
+      "beneficio": 4,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 13,
+    "fields": {
+      "tipo_boleto": 4,
+      "beneficio": 13,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 14,
+    "fields": {
+      "tipo_boleto": 4,
+      "beneficio": 10,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 15,
+    "fields": {
+      "tipo_boleto": 4,
+      "beneficio": 5,
+      "activo": true
+    }
+  },
+  {
+    "model": "eventos.tipoboletobeneficio",
+    "pk": 16,
+    "fields": {
+      "tipo_boleto": 4,
+      "beneficio": 9,
+      "activo": false
+    }
+  }
+]

@@ -1,0 +1,93 @@
+[
+  {
+    "model": "eventos.beneficio",
+    "pk": 1,
+    "fields": {
+      "nombre": "Acceso a todo el evento"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 2,
+    "fields": {
+      "nombre": "Acceso preferente"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 3,
+    "fields": {
+      "nombre": "Asiento en primera fila"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 4,
+    "fields": {
+      "nombre": "Atención personalizada"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 5,
+    "fields": {
+      "nombre": "Elige a tu peleador"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 6,
+    "fields": {
+      "nombre": "Foto con peleadores"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 7,
+    "fields": {
+      "nombre": "Foto grupal"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 8,
+    "fields": {
+      "nombre": "Mesa para 5 personas"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 9,
+    "fields": {
+      "nombre": "Sin acceso presencial"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 10,
+    "fields": {
+      "nombre": "Souvenir digital"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 11,
+    "fields": {
+      "nombre": "Souvenir físico"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 12,
+    "fields": {
+      "nombre": "Souvenirs premium"
+    }
+  },
+  {
+    "model": "eventos.beneficio",
+    "pk": 13,
+    "fields": {
+      "nombre": "Todas las peleas en vivo"
+    }
+  }
+]

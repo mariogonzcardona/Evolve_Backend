@@ -1,0 +1,21 @@
+[
+  {
+    "model": "eventos.evento",
+    "pk": 1,
+    "fields": {
+      "nombre": "Evolve Grappling Pro 5",
+      "descripcion": "Este evento se estará llevando a cabo a finales de septiembre 27, el evento sera un torneo de BJiu Jitsu, para diferentes edades de 5 en adelante.",
+      "tipo_evento": "torneo",
+      "video_promocional_url": "https://www.youtube.com/embed/Ndi4kjk_ImM?rel=0&autoplay=0&mute=1&vq=highres",
+      "fecha_evento": "2025-09-27",
+      "hora_inicio": "19:00:00",
+      "hora_fin": "23:00:00",
+      "direccion": 1,
+      "fecha_pesaje": "2025-09-26",
+      "hora_pesaje": "19:00:00",
+      "esta_activo": true,
+      "fecha_creacion": "2025-07-10T03:21:39.109Z",
+      "fecha_actualizacion": "2025-07-10T03:21:49.216Z"
+    }
+  }
+]
