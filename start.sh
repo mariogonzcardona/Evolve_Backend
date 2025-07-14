@@ -11,9 +11,18 @@ python manage.py migrate
 python manage.py makemigrations
 python manage.py collectstatic --noinput
 
-python manage.py loaddata fixtures/users_data.json
-python manage.py loaddata fixtures/nacionalidades.json
+# python manage.py loaddata fixtures/users_data.json
 # python manage.py loaddata fixtures/inscriptions.json
+python manage.py loaddata fixtures/users_data.json
+python manage.py loaddata fixtures/beneficios.json
+python manage.py loaddata fixtures/direcciones.json
+python manage.py loaddata fixtures/eventos.json
+python manage.py loaddata fixtures/nacionalidades.json
+python manage.py loaddata fixtures/patrocinadores.json
+python manage.py loaddata fixtures/peleadores.json
+python manage.py loaddata fixtures/tipos_boletos.json
+python manage.py loaddata fixtures/tipo_boleto_beneficio.json
+python manage.py loaddata fixtures/tipos_patrocinio.json
 
 # 💡 Si estás corriendo pruebas, sal del script aquí
 if [[ "$RUN_TESTS" == "true" ]]; then

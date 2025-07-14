@@ -4,7 +4,9 @@
     "pk": 1,
     "fields": {
       "nombre": "México",
-      "codigo_iso": "mx"
+      "codigo_iso": "mx",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -12,7 +14,9 @@
     "pk": 2,
     "fields": {
       "nombre": "Estados Unidos",
-      "codigo_iso": "us"
+      "codigo_iso": "us",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -20,7 +24,9 @@
     "pk": 3,
     "fields": {
       "nombre": "Canadá",
-      "codigo_iso": "ca"
+      "codigo_iso": "ca",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -28,7 +34,9 @@
     "pk": 4,
     "fields": {
       "nombre": "Brasil",
-      "codigo_iso": "br"
+      "codigo_iso": "br",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -36,7 +44,9 @@
     "pk": 5,
     "fields": {
       "nombre": "Argentina",
-      "codigo_iso": "ar"
+      "codigo_iso": "ar",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -44,7 +54,9 @@
     "pk": 6,
     "fields": {
       "nombre": "España",
-      "codigo_iso": "es"
+      "codigo_iso": "es",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -52,7 +64,9 @@
     "pk": 7,
     "fields": {
       "nombre": "Francia",
-      "codigo_iso": "fr"
+      "codigo_iso": "fr",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -60,7 +74,9 @@
     "pk": 8,
     "fields": {
       "nombre": "Alemania",
-      "codigo_iso": "de"
+      "codigo_iso": "de",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -68,7 +84,9 @@
     "pk": 9,
     "fields": {
       "nombre": "Italia",
-      "codigo_iso": "it"
+      "codigo_iso": "it",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   },
   {
@@ -76,7 +94,9 @@
     "pk": 10,
     "fields": {
       "nombre": "Japón",
-      "codigo_iso": "jp"
+      "codigo_iso": "jp",
+      "fecha_creacion": "2025-07-10T05:28:47.825Z",
+      "fecha_actualizacion": "2025-07-10T05:32:57.958Z"
     }
   }
 ]

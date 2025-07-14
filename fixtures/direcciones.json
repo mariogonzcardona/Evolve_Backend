@@ -1,0 +1,16 @@
+[
+  {
+    "model": "eventos.direccion",
+    "pk": 1,
+    "fields": {
+      "estado": "Coahuila",
+      "ciudad": "Saltillo",
+      "calle": "Oro",
+      "numero": "269",
+      "colonia": "Bonanza",
+      "codigo_postal": "25296",
+      "fecha_creacion": "2025-07-14T07:00:24.304Z",
+      "fecha_actualizacion": "2025-07-14T07:00:24.304Z"
+    }
+  }
+]

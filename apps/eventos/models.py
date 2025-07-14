@@ -2,6 +2,7 @@ from django.db import models
 from apps.eventos.enums import TipoEvento, Genero, PreferenciaCombate, EstatusPago, TipoPatrocinio, CintaBJJ
 
 # Modelo abstracto para redes sociales (opcional)
+# Este modelo puede ser heredado por otros modelos que necesiten campos de redes sociales
 class RedesSociales(models.Model):
     youtube = models.URLField(blank=True, null=True, help_text="Enlace al canal de YouTube")
     facebook = models.URLField(blank=True, null=True, help_text="Enlace al perfil de Facebook")
@@ -16,6 +17,9 @@ class RedesSociales(models.Model):
 class Nacionalidad(models.Model):
     nombre = models.CharField(max_length=100, unique=True, help_text="Nombre del país o nacionalidad")
     codigo_iso = models.CharField(max_length=2, unique=True, help_text="Código ISO alfa-2 (ej. mx, us)")
+    activo = models.BooleanField(default=True, help_text="Define si la nacionalidad está activa")
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'eventos_nacionalidad'
@@ -36,6 +40,9 @@ class Direccion(models.Model):
     colonia = models.CharField(max_length=100, help_text="Colonia o barrio")
     codigo_postal = models.CharField(max_length=10, help_text="Código postal")
 
+    fecha_creacion = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación de la dirección")
+    fecha_actualizacion = models.DateTimeField(auto_now=True, help_text="Fecha y hora de la última actualización de la dirección")
+    
     class Meta:
         db_table = 'eventos_direccion'
         verbose_name = 'Dirección'
@@ -77,6 +84,7 @@ class Peleador(RedesSociales,models.Model):
     # Datos personales
     nombre = models.CharField(max_length=50, help_text="Nombre del peleador")
     apellido = models.CharField(max_length=50, help_text="Apellido del peleador")
+    apodo = models.CharField(max_length=50, help_text="Sobre nombre del peleador", blank=True, null=True)
     email = models.EmailField(unique=True, help_text="Correo electrónico de contacto")
     telefono = models.CharField(max_length=20, help_text="Número telefónico de contacto")
     nacionalidad = models.ForeignKey('Nacionalidad', on_delete=models.PROTECT, related_name='peleadores', help_text="País de nacionalidad")
@@ -196,6 +204,8 @@ class TipoBoleto(models.Model):
     def __str__(self):
         return self.nombre
 
+# Modelo para beneficios asociados a tipos de boletos
+# Este modelo relaciona los beneficios con los tipos de boletos, permitiendo definir qué beneficios están incluidos en cada tipo
 class TipoBoletoBeneficio(models.Model):
     tipo_boleto = models.ForeignKey(TipoBoleto, on_delete=models.CASCADE, related_name='detalles_beneficio')
     beneficio = models.ForeignKey(Beneficio, on_delete=models.CASCADE, related_name='detalles_boleto')
@@ -256,7 +266,8 @@ class CompraBoleto(models.Model):
     def __str__(self):
         return f"Compra de {self.cantidad} boleto(s) para {self.evento.nombre} por {self.comprador.nombre} {self.comprador.apellido}"
 
-
+# Modelo para transacciones con Stripe
+# Este modelo registra las transacciones procesadas a través de Stripe para las compras de boletos
 class TransaccionStripe(models.Model):
     compra = models.OneToOneField('CompraBoleto', on_delete=models.CASCADE, related_name='transaccion_stripe', help_text="Compra asociada a esta transacción")
     payment_intent_id = models.CharField(max_length=100, unique=True, help_text="ID de PaymentIntent en Stripe")

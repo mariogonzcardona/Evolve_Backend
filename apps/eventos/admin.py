@@ -16,22 +16,24 @@ from .models import (
 
 @admin.register(Nacionalidad)
 class NacionalidadAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'codigo_iso')
+    list_display = ('id', 'nombre', 'codigo_iso','activo')
     search_fields = ('nombre', 'codigo_iso')
     ordering = ('nombre',)
     list_filter = ('nombre',)
     
     fieldsets = (
         (None, {
-            'fields': ('nombre', 'codigo_iso')
+            'fields': ('nombre', 'codigo_iso', 'activo')
         }),
     )
+    readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
 @admin.register(Direccion)
 class DireccionAdmin(admin.ModelAdmin):
     list_display = ('id','calle', 'numero', 'colonia', 'ciudad', 'estado', 'codigo_postal')
     search_fields = ('calle', 'colonia', 'ciudad', 'estado', 'codigo_postal')
     list_filter = ('estado', 'ciudad')
+    readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
@@ -40,6 +42,7 @@ class EventoAdmin(admin.ModelAdmin):
     list_filter = ('tipo_evento', 'esta_activo', 'fecha_evento')
     date_hierarchy = 'fecha_evento'
     ordering = ('-fecha_evento',)
+    readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
 @admin.register(Peleador)
 class PeleadorAdmin(admin.ModelAdmin):

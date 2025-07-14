@@ -448,10 +448,83 @@
     }
   },
   {
+    "model": "users.usuariobase",
+    "pk": 17,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$FbM5JNbc34zNo8W5SkR3sO$zc4p9kTiYcxbPB2mCNVLMRgv3deM+FtPbDsdNrtP5KI=",
+      "last_login": null,
+      "is_superuser": false,
+      "email": "egpro_bot@evolvegrapplingpro.com",
+      "nombre": "Evolve",
+      "apellido": "Grappling Pro",
+      "alias": null,
+      "fecha_nacimiento": "1993-07-25",
+      "genero": "M",
+      "padecimientos_medicos": null,
+      "telefono_personal": "",
+      "telefono_emergencia": "",
+      "foto_perfil": "perfiles/default.jpg",
+      "estado": "",
+      "ciudad": "",
+      "colonia": "",
+      "calle": "",
+      "numero": "",
+      "codigo_postal": "",
+      "is_active": true,
+      "is_staff": false,
+      "role": "egpro",
+      "fecha_creacion": "2025-07-11T18:17:20.120Z",
+      "fecha_actualizacion": "2025-07-11T18:17:20.120Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 1,
+    "fields": { "usuario": 7, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 2,
+    "fields": { "usuario": 8, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 3,
+    "fields": { "usuario": 9, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 4,
+    "fields": { "usuario": 10, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 5,
+    "fields": { "usuario": 11, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 6,
+    "fields": { "usuario": 12, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 7,
+    "fields": { "usuario": 13, "filial": null, "status": "active" }
+  },
+  {
+    "model": "users.cliente",
+    "pk": 8,
+    "fields": { "usuario": 14, "filial": null, "status": "active" }
+  },
+  {
     "model": "users.empleado",
     "pk": 1,
     "fields": {
       "usuario": 5,
+      "filial": null,
       "fecha_contratacion": "2022-01-01",
       "especialidad": "CrossFit",
       "salario": "15000.00",
@@ -467,6 +540,7 @@
     "pk": 2,
     "fields": {
       "usuario": 6,
+      "filial": null,
       "fecha_contratacion": "2022-01-01",
       "especialidad": "CrossFit",
       "salario": "15000.00",
@@ -474,70 +548,6 @@
       "tipo_contrato": "Medio tiempo",
       "fecha_creacion": "2023-01-01T12:00:00Z",
       "fecha_actualizacion": "2023-01-01T12:00:00Z",
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 1,
-    "fields": {
-      "usuario": 7,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 2,
-    "fields": {
-      "usuario": 8,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 3,
-    "fields": {
-      "usuario": 9,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 4,
-    "fields": {
-      "usuario": 10,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 5,
-    "fields": {
-      "usuario": 11,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 6,
-    "fields": {
-      "usuario": 12,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 7,
-    "fields": {
-      "usuario": 13,
-      "status": "active"
-    }
-  },
-  {
-    "model": "users.cliente",
-    "pk": 8,
-    "fields": {
-      "usuario": 14,
       "status": "active"
     }
   }

@@ -4,6 +4,7 @@ class UserRoles:
     ADMIN = "admin"                    # Admin de filial
     COACH = "coach"                    # Instructor o entrenador
     ATHLETE = "athlete"                # Cliente o usuario final
+    EGPRO = "egpro"                    # Usuario bot de EGPRO
 
     CHOICES = [
         (SUPERADMIN, "Superadmin"),
@@ -11,6 +12,7 @@ class UserRoles:
         (ADMIN, "Admin"),
         (COACH, "Coach"),
         (ATHLETE, "Athlete"),
+        (EGPRO, "EgPro"),
     ]
 
 class UserStatus:

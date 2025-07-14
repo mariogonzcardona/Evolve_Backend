@@ -33,7 +33,7 @@ class UsuarioBaseAdmin(UserAdmin):
             'classes': ('wide',),
             'fields': (
                 'email', 'nombre', 'apellido', 'password1', 'password2',
-                'role', 'is_active', 'is_staff', 'is_superuser'
+                'role', 'is_active', 'is_staff', 'is_superuser','fecha_nacimiento'
             )
         }),
     )

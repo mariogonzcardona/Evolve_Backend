@@ -16,7 +16,6 @@ class HasAnyRole(BasePermission):
             request.user.role in view.allowed_roles
         )
 
-
 class IsSelfOrBusinessRole(BasePermission):
     """
     Permite acceso si el usuario es el mismo que el objeto,
@@ -38,7 +37,6 @@ class IsSelfOrBusinessRole(BasePermission):
             request.user.role in self.business_roles
         )
 
-
 class IsBusinessRoleOrReadOnly(BasePermission):
     """
     Permite lectura a usuarios autenticados,
@@ -59,7 +57,6 @@ class IsBusinessRoleOrReadOnly(BasePermission):
             and request.user.is_authenticated
             and request.user.role in self.business_roles
         )
-
 
 class IsSelfOnly(BasePermission):
     """
