@@ -141,6 +141,7 @@ class PatrocinadorAdmin(admin.ModelAdmin):
                 'ciudad',
                 'sitio_web',
                 'activo',
+                'confirmado',
             )
         }),
         ('Interes', {
@@ -149,7 +150,6 @@ class PatrocinadorAdmin(admin.ModelAdmin):
                 'ha_patrocinado_antes',
                 'mensaje',
                 'logo',
-                'confirmado',
             )
         }),
         ('Redes sociales', {
@@ -184,7 +184,7 @@ class TipoBoletoAdmin(admin.ModelAdmin):
             'fields': ('nombre', 'descripcion', 'evento')
         }),
         ('Detalles del boleto', {
-            'fields': ('precio', 'cupo', 'orden', 'activo')
+            'fields': ('precio', 'cupo', 'orden', 'activo','destacado','mensaje_promocional')
         }),
         ('Fechas automáticas', {
             'fields': ('fecha_creacion', 'fecha_actualizacion')

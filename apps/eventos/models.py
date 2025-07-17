@@ -192,6 +192,8 @@ class TipoBoleto(models.Model):
     orden = models.IntegerField(default=0, help_text="Orden de aparición en el frontend")
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='tipos_boleto', help_text="Evento al que pertenece este tipo de boleto")
     activo = models.BooleanField(default=True, help_text="Define si el tipo de boleto está activo")
+    destacado = models.BooleanField(default=False, help_text="Define si el boleto estara marcado como destacado de entre el resto")
+    mensaje_promocional = models.CharField(max_length=50,help_text="Define alguna promocion o ventaja añadida al boleto")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     
@@ -292,3 +294,4 @@ class TransaccionStripe(models.Model):
 
     def __str__(self):
         return f"[{self.estatus.upper()}] {self.payment_intent_id} - {self.monto} {self.moneda}"
+

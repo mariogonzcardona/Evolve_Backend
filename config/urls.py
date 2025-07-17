@@ -29,7 +29,9 @@ urlpatterns = [
     # Paths de la API
     path('api/v1/', include(('apps.users.urls', 'users'), namespace='users')),
     path('api/v1/', include(('apps.eventos.urls', 'eventos'), namespace='eventos')),
-    # path('api/v1/', include('apps.inscriptions.urls')), 
+    path('api/v1/', include(('apps.email_service.urls', 'email_service'), namespace='email_service')),
+    # path('api/v1/', include('apps.inscriptions.urls')),
+    
     
     # Paths de la API
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

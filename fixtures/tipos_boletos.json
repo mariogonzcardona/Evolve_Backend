@@ -10,6 +10,8 @@
       "orden": 1,
       "evento": 1,
       "activo": true,
+      "mensaje_promocional":"",
+      "destacado":false,
       "fecha_creacion": "2025-07-10T06:40:00Z",
       "fecha_actualizacion": "2025-07-10T06:08:37.015Z"
     }
@@ -25,6 +27,8 @@
       "orden": 2,
       "evento": 1,
       "activo": true,
+      "mensaje_promocional":"¡Asientos limitados frente al área VIP!",
+      "destacado":false,
       "fecha_creacion": "2025-07-10T06:40:00Z",
       "fecha_actualizacion": "2025-07-10T06:08:49.663Z"
     }
@@ -40,6 +44,8 @@
       "orden": 3,
       "evento": 1,
       "activo": true,
+      "mensaje_promocional":"¡Cupo limitado a 50 personas!",
+      "destacado":false,
       "fecha_creacion": "2025-07-10T06:40:00Z",
       "fecha_actualizacion": "2025-07-10T06:08:58.361Z"
     }
@@ -55,6 +61,8 @@
       "orden": 4,
       "evento": 1,
       "activo": true,
+      "mensaje_promocional":"¡Vive la emoción desde donde estés!",
+      "destacado":true,
       "fecha_creacion": "2025-07-10T06:40:00Z",
       "fecha_actualizacion": "2025-07-10T06:09:37.280Z"
     }

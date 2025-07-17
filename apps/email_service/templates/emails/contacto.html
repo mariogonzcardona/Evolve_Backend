@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mensaje de contacto - Evolve Grappling Pro</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f5f7fa; margin: 0; padding: 30px;">
+
+  <table style="max-width: 600px; width: 100%; margin: auto; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+    <tr>
+      <td style="background-color: #111; padding: 24px 32px; text-align: center;">
+        <h1 style="color: #fff; margin: 0; font-size: 22px;">📩 Nuevo mensaje de contacto</h1>
+        <p style="color: #bbb; margin: 5px 0 0;">Evolve Grappling Pro</p>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding: 32px;">
+        <p style="margin: 0 0 16px;"><strong>👤 Nombre:</strong> {{ nombre }}</p>
+        <p style="margin: 0 0 16px;"><strong>✉️ Correo electrónico:</strong> <a href="mailto:{{ correo }}" style="color: #007bff;">{{ correo }}</a></p>
+        <p style="margin: 0 0 16px;"><strong>📝 Asunto:</strong> {{ email_subject }}</p>
+
+        <div style="margin: 32px 0;">
+          <p style="margin-bottom: 10px;"><strong>💬 Mensaje:</strong></p>
+          <div style="background-color: #f0f2f5; padding: 20px; border-left: 4px solid #007bff; border-radius: 6px; color: #333;">
+            {{ mensaje }}
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="background-color: #fafafa; text-align: center; padding: 24px 32px;">
+        <p style="font-size: 12px; color: #777;">
+          Este mensaje fue enviado desde el formulario de contacto en<br />
+          <strong>evolvegrapplingpro.com</strong>
+        </p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
