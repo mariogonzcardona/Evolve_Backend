@@ -26,8 +26,8 @@ urlpatterns = [
     path('auth/password/change/', ChangePasswordView.as_view(), name='password-change'),
 
     # --- Invitación y registro ---
-    path('invitaciones/', UserInvitationCreateView.as_view(), name='crear-invitacion'),
-    path('invitaciones/registro/', CompleteInvitationView.as_view(), name='registro-invitado'),
+    # path('invitaciones/', UserInvitationCreateView.as_view(), name='crear-invitacion'),
+    # path('invitaciones/registro/', CompleteInvitationView.as_view(), name='registro-invitado'),
 
     # --- CRUD por rol ---
     path('', include(user_api_urls)),

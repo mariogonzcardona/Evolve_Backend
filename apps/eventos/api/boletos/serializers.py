@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from apps.eventos.models import TipoBoleto, TipoBoletoBeneficio
 
-
 class BeneficioPorTipoSerializer(serializers.Serializer):
     nombre = serializers.CharField()
     activo = serializers.BooleanField()
@@ -18,3 +17,8 @@ class TipoBoletoPublicSerializer(serializers.ModelSerializer):
         return [
             {"nombre": detalle.beneficio.nombre,"activo": detalle.activo} for detalle in detalles
         ]
+
+class BoletosEventoActivoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoBoleto
+        fields = ['id', 'nombre','precio']

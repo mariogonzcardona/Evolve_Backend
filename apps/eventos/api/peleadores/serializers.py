@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.eventos.models import Peleador, Nacionalidad, Direccion, Evento
-from apps.eventos.api.serializers import DireccionSerializer
 from datetime import date
+from django.db import transaction, IntegrityError
 
 class NacionalidadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,58 +13,96 @@ class EventoSimpleSerializer(serializers.ModelSerializer):
         model = Evento
         fields = ['id', 'nombre', 'fecha_evento']
 
-class PeleadorSerializer(serializers.ModelSerializer):
-    nacionalidad = NacionalidadSerializer(read_only=True)
-    direccion = DireccionSerializer(read_only=True)
-    evento = EventoSimpleSerializer(read_only=True)
-
-    nacionalidad_id = serializers.PrimaryKeyRelatedField(
-        queryset=Nacionalidad.objects.filter(activo=True),
-        write_only=True,
-        source='nacionalidad'
-    )
-    direccion_id = serializers.PrimaryKeyRelatedField(
-        queryset=Direccion.objects.all(),
-        write_only=True,
-        source='direccion'
-    )
-    evento_id = serializers.PrimaryKeyRelatedField(
-        queryset=Evento.objects.filter(esta_activo=True),
-        write_only=True,
-        source='evento'
-    )
+class PeleadorRegistroSerializer(serializers.ModelSerializer):
+    nacionalidad = serializers.DictField(write_only=True)
+    direccion = serializers.DictField(write_only=True)
+    email = serializers.EmailField()
 
     class Meta:
         model = Peleador
         fields = [
-            'id',
-            'nombre',
-            'apellido',
-            'apodo',
-            'email',
-            'telefono',
-            'nacionalidad', 'nacionalidad_id',
-            'direccion', 'direccion_id',
-            'fecha_nacimiento',
-            'genero',
-            'evento', 'evento_id',
-            'peso_kg',
-            'preferencia_combate',
-            'cinta',
-            'equipo',
-            'foto',
-            'trayectoria',
-            'categoria',
-            'racha',
-            'firma_contrato',
-            'es_estelar',
-            'confirmado',
-            'activo',
-            'facebook', 'instagram', 'twitter', 'youtube',
-            'fecha_creacion',
-            'fecha_actualizacion',
+            "foto",
+            "nombre",
+            "apellido",
+            "apodo",
+            "email",
+            "telefono",
+            "nacionalidad",
+            "direccion",
+            "fecha_nacimiento",
+            "cinta",
+            "genero",
+            "peso_kg",
+            "preferencia_combate",
+            "categoria",
+            "racha",
+            "equipo",
+            "trayectoria",
+            "youtube",
+            "facebook",
+            "instagram",
+            "twitter",
         ]
-        read_only_fields = ['id', 'confirmado', 'activo', 'fecha_creacion', 'fecha_actualizacion']
+        extra_kwargs = {
+            "email": {"validators": []},  # Desactiva validadores automáticos
+        }
+
+    def validate_email(self, value):
+        value = value.strip().lower()
+        if Peleador.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Este correo ya está registrado para el evento.")
+        return value
+
+    def create(self, validated_data):
+        nacionalidad_data = validated_data.pop("nacionalidad", {})
+        direccion_data = validated_data.pop("direccion", {})
+
+        try:
+            with transaction.atomic():
+                # Validación de nacionalidad
+                nacionalidad = Nacionalidad.objects.filter(
+                    codigo_iso=nacionalidad_data.get("codigo_iso"), activo=True
+                ).first()
+                if not nacionalidad:
+                    raise serializers.ValidationError({"nacionalidad": "No válida o no activa."})
+
+                # Validación de evento activo
+                evento = Evento.objects.filter(esta_activo=True).first()
+                if not evento:
+                    raise serializers.ValidationError({"evento": "No hay evento activo para registrar."})
+
+                # Normaliza el email
+                validated_data["email"] = validated_data["email"].strip().lower()
+
+                # Crea dirección y aplica al diccionario final
+                direccion = Direccion.objects.create(**direccion_data)
+                validated_data["nacionalidad"] = nacionalidad
+                validated_data["direccion"] = direccion
+                validated_data["evento"] = evento
+
+                # Log de datos para depuración
+                print("Datos validados para crear peleador:", validated_data)
+
+                # Usar el método padre para aplicar validaciones de modelo
+                peleador = super().create(validated_data)
+                return peleador
+
+        except IntegrityError as e:
+            print("Error de integridad detectado:")
+            import traceback
+            traceback.print_exc()
+            raise serializers.ValidationError({
+                "email": "Ya existe un peleador registrado con este correo." if "email" in str(e) else "Error de integridad en la base de datos.",
+                "detalle": str(e),
+            })
+
+        except Exception as e:
+            print("Error general durante creación de peleador:")
+            import traceback
+            traceback.print_exc()
+            raise serializers.ValidationError({
+                "detalle": f"Error al crear el peleador: {str(e)}"
+            })
 
 class PeleadorPublicoSerializer(serializers.ModelSerializer):
     nacionalidad = serializers.CharField(source="nacionalidad.codigo_iso")
@@ -86,7 +124,7 @@ class PeleadorPublicoSerializer(serializers.ModelSerializer):
             "instagram",
             "twitter"
         ]
-    
+
     def get_edad(self, obj):
         if not obj.fecha_nacimiento:
             return None
@@ -94,3 +132,28 @@ class PeleadorPublicoSerializer(serializers.ModelSerializer):
         return (
             today.year - obj.fecha_nacimiento.year - ((today.month, today.day) < (obj.fecha_nacimiento.month, obj.fecha_nacimiento.day))
         )
+
+class PerfilUploadSerializer(serializers.Serializer):
+    archivo = serializers.ImageField()
+
+    def validate_archivo(self, value):
+        max_size_mb = 5
+        if value.size > max_size_mb * 1024 * 1024:
+            raise serializers.ValidationError(f"La imagen supera los {max_size_mb}MB.")
+        return value
+
+class PeleadoresConfirmadosSerializer(serializers.ModelSerializer):
+    nombre_completo = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Peleador
+        fields = [
+            "id",
+            "nombre",
+            "apellido",
+            "apodo",
+            'nombre_completo'
+        ]
+    
+    def get_nombre_completo(self, obj):
+        return f"{obj.nombre} ({obj.apodo}) {obj.apellido}" if obj.apodo else f"{obj.nombre} {obj.apellido}"

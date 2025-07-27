@@ -99,14 +99,16 @@ class Peleador(RedesSociales,models.Model):
     preferencia_combate = models.CharField(max_length=20, choices=PreferenciaCombate.CHOICES, help_text="Tipo de combate preferido")
     cinta = models.CharField(max_length=50, choices=CintaBJJ.CHOICES,help_text="Grado de cinta actual")
     equipo = models.CharField(max_length=100, help_text="Academia o equipo al que pertenece")
-    foto = models.ImageField(upload_to='peleadores/', blank=True, null=True, help_text="Foto de perfil del peleador")
+    foto = models.URLField(max_length=200,blank=True, null=True, help_text="URL de imagen de perfil alojado en S3")
     trayectoria = models.TextField(blank=True, null=True, help_text="Texto libre donde el peleador puede describir su trayectoria deportiva")
     categoria = models.CharField(max_length=50, help_text="Categoría competitiva (ej. Lightweight, Heavyweight)")
     racha = models.CharField(max_length=100, blank=True, null=True, help_text="Historial de combates (ej. 3W-1L)")
+    
     firma_contrato = models.BooleanField(default=False, help_text="¿Tiene contrato firmado con la organización?")
     es_estelar = models.BooleanField(default=False, help_text="¿Es un peleador estelar?")
     confirmado = models.BooleanField(default=False, help_text="¿Ha sido aceptado oficialmente por la organización?")
     activo = models.BooleanField(default=True, help_text="Define si el peleador está activo en la organización")
+    
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
@@ -153,7 +155,7 @@ class Patrocinador(RedesSociales,models.Model):
     tipos_patrocinio = models.ManyToManyField(TipoPatrocinio, related_name='patrocinadores')
     ha_patrocinado_antes = models.BooleanField(default=False, help_text="¿Ha patrocinado eventos anteriormente?")
     mensaje = models.TextField(blank=True, null=True, help_text="Comentarios u observaciones adicionales")
-    logo = models.ImageField(upload_to='patrocinadores/', blank=True, null=True, help_text="Logo de la marca patrocinadora")
+    logo = models.URLField(blank=True, null=True, help_text="URL del logo alojado en S3")
     confirmado = models.BooleanField(default=False, help_text="¿El patrocinio ha sido confirmado por la organización?")
     activo = models.BooleanField(default=True, help_text="Define si el patrocinador está activo en la organización")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -295,3 +297,23 @@ class TransaccionStripe(models.Model):
     def __str__(self):
         return f"[{self.estatus.upper()}] {self.payment_intent_id} - {self.monto} {self.moneda}"
 
+# class IntentoDePago(models.Model):
+#     payment_intent_id = models.CharField(max_length=100, unique=True)
+#     email = models.EmailField()
+#     tipo_boleto = models.ForeignKey(TipoBoleto, on_delete=models.SET_NULL, null=True, blank=True)
+#     cantidad = models.PositiveIntegerField(default=1)
+#     monto = models.DecimalField(max_digits=10, decimal_places=2)
+#     moneda = models.CharField(max_length=10, default='MXN')
+#     estatus = models.CharField(max_length=50, help_text="Estado actual del intento (ej. created, succeeded, failed)")
+#     metadata = models.JSONField(blank=True, null=True)
+#     creado_en = models.DateTimeField(auto_now_add=True)
+#     actualizado_en = models.DateTimeField(auto_now=True)
+
+#     class Meta:
+#         db_table = 'pagos_intentos_pago'
+#         verbose_name = 'Intento de pago'
+#         verbose_name_plural = 'Intentos de pago'
+#         ordering = ['-creado_en']
+
+#     def __str__(self):
+#         return f"[{self.estatus.upper()}] {self.payment_intent_id}"
