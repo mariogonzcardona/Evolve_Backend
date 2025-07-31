@@ -12,3 +12,4 @@ stripe==12.3.0
 boto3==1.39.8
 botocore==1.39.8
 django-ratelimit==4.1.0
+qrcode==8.2

@@ -9,14 +9,15 @@ from rest_framework import status
 from decouple import config
 from rest_framework.permissions import AllowAny
 from decimal import Decimal
-from stripe.error import CardError, RateLimitError, InvalidRequestError, AuthenticationError, APIConnectionError, StripeError
+from stripe.error import CardError, InvalidRequestError, AuthenticationError, APIConnectionError, StripeError
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from rest_framework.exceptions import Throttled
 from apps.eventos.models import CompraBoleto, TransaccionStripe, Comprador, Direccion, TipoBoleto, Evento, Peleador
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-
+from apps.eventos.services.post_compra import procesar_post_compra
+from datetime import datetime
 
 stripe.api_key = config("STRIPE_SECRET_KEY")
 endpoint_secret = config("STRIPE_WEBHOOK_SECRET")
@@ -51,7 +52,16 @@ class StripeWebhookView(APIView):
             try:
                 metadata = intent.get("metadata", {})
                 print(f"🧾 Metadata recibida: {metadata}")
-
+                
+                fecha_nacimiento_str = metadata.get("fecha_nacimiento", "")
+                fecha_nacimiento = None
+                if fecha_nacimiento_str:
+                    try:
+                        fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, "%Y-%m-%d").date()
+                    except ValueError:
+                        print("❌ Fecha inválida en metadata:", fecha_nacimiento_str)
+                        return Response({"error": "Formato de fecha inválido. Debe ser YYYY-MM-DD."}, status=400)
+                
                 email = metadata.get("email")
                 tipo_boleto_nombre = metadata.get("tipo_boleto")
                 cantidad = int(metadata.get("cantidad", 1))
@@ -90,21 +100,27 @@ class StripeWebhookView(APIView):
 
                 evento = tipo_boleto.evento
                 print(f"📅 Evento vinculado: {evento.nombre}")
+                
+                asistira_str = metadata.get("esAsistente", "true")
+                asistira = asistira_str.lower() == "true"
 
                 comprador, creado = Comprador.objects.get_or_create(
                     email=email,
                     defaults={
                         "nombre": nombre,
                         "apellido": apellido,
+                        "fecha_nacimiento": fecha_nacimiento,
                         "telefono": telefono,
                         "direccion": direccion,
-                        "es_asistente": True,
+                        "es_asistente": asistira,
                     }
                 )
                 if creado:
                     print(f"🙋‍♂️ Comprador creado con ID: {comprador.id}")
                 else:
                     print(f"🙋‍♂️ Comprador existente usado: {comprador.id}")
+                    comprador.es_asistente = asistira
+                    comprador.save()
 
                 compra = CompraBoleto.objects.create(
                     evento=evento,
@@ -130,7 +146,10 @@ class StripeWebhookView(APIView):
                     raw_data=intent
                 )
                 print("💰 Transacción Stripe registrada exitosamente")
-
+                try:
+                    procesar_post_compra(compra)
+                except Exception as e:
+                    print(f"⚠️ Error post-compra: {e}")
                 return Response({"mensaje": "Compra registrada vía webhook"}, status=200)
 
             except Exception as e:
@@ -189,6 +208,7 @@ class CrearIntentoPagoView(APIView):
                 "cantidad": str(cantidad),
                 "nombre": datos.get("nombre", ""),
                 "apellido": datos.get("apellido", ""),
+                "fecha_nacimiento": datos.get("fecha_nacimiento", ""),
                 "email": email,
                 "telefono": datos.get("telefono", ""),
                 "estado": datos.get("estado", ""),
@@ -199,6 +219,8 @@ class CrearIntentoPagoView(APIView):
                 "codigo_postal": datos.get("codigo_postal", ""),
                 "evento": datos.get("evento", "EvolveGP2025"),
                 "id_peleador": str(datos.get("id_peleador", "")),
+                "esAsistente": str(datos.get("esAsistente", "true")).lower(),
+                
             }
 
             # Crear el PaymentIntent

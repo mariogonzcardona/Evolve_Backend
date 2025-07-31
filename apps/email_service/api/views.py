@@ -27,4 +27,5 @@ class ContactoCreateView(CreateAPIView):
             'nombre': data['nombre'],
             'correo': data['correo'],
             'mensaje': data['mensaje'],
+            'template': 'contacto'  # Specify the template to use
         })

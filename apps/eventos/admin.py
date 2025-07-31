@@ -11,7 +11,8 @@ from .models import (
     TipoPatrocinio,
     TipoBoletoBeneficio,
     Beneficio,
-    TransaccionStripe
+    TransaccionStripe,
+    TokenAsignacion
 )
 
 @admin.register(Nacionalidad)
@@ -238,4 +239,12 @@ class TransaccionStripeAdmin(admin.ModelAdmin):
     search_fields = ("payment_intent_id", "compra__comprador__email", "compra__comprador__nombre")
     list_filter = ("estatus", "metodo_pago", "moneda")
     readonly_fields = ("raw_data", "fecha_creacion")
+    ordering = ("-fecha_creacion",)
+
+@admin.register(TokenAsignacion)
+class TokenAsignacionAdmin(admin.ModelAdmin):
+    list_display = ("id", "compra","token", "usado", "fecha_creacion")
+    search_fields = ("compra__comprador__email", "token")
+    list_filter = ("usado",)
+    readonly_fields = ("fecha_creacion",)
     ordering = ("-fecha_creacion",)

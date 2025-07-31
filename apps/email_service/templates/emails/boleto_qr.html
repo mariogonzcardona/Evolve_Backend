@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tu Boleto - Evolve Grappling Pro</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f5f7fa; margin: 0; padding: 30px;">
+
+  <table style="max-width: 600px; width: 100%; margin: auto; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden;">
+    
+    <!-- Header -->
+    <tr>
+      <td style="background-color: #5295fa; padding: 24px; text-align: center;">
+        <img src="https://evolve-backend.s3.us-east-1.amazonaws.com/logotipo/EGPro.png" alt="Evolve Logo" width="80" />
+        <h1 style="color: #fff; font-size: 22px; margin: 10px 0 0;">🎟️ ¡Gracias por tu compra!</h1>
+      </td>
+    </tr>
+
+    <!-- Cuerpo -->
+    <tr>
+      <td style="padding: 32px;">
+        <p style="margin: 0 0 16px;">Hola <strong>{{ nombre_completo }}</strong>,</p>
+
+        <p style="margin: 0 0 16px;">
+          Aquí tienes tu boleto para el evento <strong>{{ nombre_evento }}</strong>.
+        </p>
+
+        <div style="background-color: #f0f4ff; padding: 16px; border-left: 4px solid #0d6efd; border-radius: 8px; margin: 16px 0;">
+          <p style="margin: 0; color: #333;"><strong>📅 Fecha:</strong> {{ fecha_evento }}</p>
+          <p style="margin: 4px 0 0; color: #333;"><strong>🕒 Hora:</strong> {{ hora_evento }}</p>
+        </div>
+
+        {% if qr_url %}
+        <div style="text-align: center; margin: 32px 0;">
+          <img src="{{ qr_url }}" alt="Código QR" width="200" style="border-radius: 12px; border: 1px solid #ccc; padding: 10px; background: #fff;" />
+          <p style="margin-top: 12px; font-size: 14px; color: #555;">Muestra este código para ingresar</p>
+        </div>
+        {% endif %}
+
+        {% if formulario_url %}
+        <p style="text-align: center;">
+          <a href="{{ formulario_url }}" style="display: inline-block; padding: 12px 20px; background: #227bff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Asignar otros boletos</a>
+        </p>
+        {% endif %}
+
+        <p style="margin-top: 32px;">¡Nos vemos en el evento! 👊</p>
+        <p><strong>— Evolve Grappling Pro</strong></p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="background-color: #fafafa; text-align: center; padding: 20px;">
+        <p style="font-size: 12px; color: #777;">
+          Este mensaje fue enviado automáticamente por <strong>evolvegrapplingpro.com</strong><br />
+          ¿Dudas? Contáctanos a <a href="mailto:contacto@evolvegrapplingpro.com">contacto@evolvegrapplingpro.com</a>
+        </p>
+      </td>
+    </tr>
+
+  </table>
+
+</body>
+</html>

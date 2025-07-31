@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from apps.eventos.enums import TipoEvento, Genero, PreferenciaCombate, EstatusPago, TipoPatrocinio, CintaBJJ
 
@@ -230,6 +231,7 @@ class Comprador(models.Model):
     nombre = models.CharField(max_length=100, help_text="Nombre del comprador")
     apellido = models.CharField(max_length=100, help_text="Apellido del comprador")
     email = models.EmailField(unique=True, help_text="Correo electrónico de contacto")
+    fecha_nacimiento = models.DateField(help_text="Fecha de nacimiento")
     telefono = models.CharField(max_length=20, blank=True, help_text="Número telefónico (opcional)")
     direccion = models.ForeignKey(Direccion, on_delete=models.PROTECT, related_name='compradores', help_text="Dirección actual del comprador")
     es_asistente = models.BooleanField(default=True, help_text="¿El comprador también asistirá al evento?")
@@ -273,7 +275,7 @@ class CompraBoleto(models.Model):
 # Modelo para transacciones con Stripe
 # Este modelo registra las transacciones procesadas a través de Stripe para las compras de boletos
 class TransaccionStripe(models.Model):
-    compra = models.OneToOneField('CompraBoleto', on_delete=models.CASCADE, related_name='transaccion_stripe', help_text="Compra asociada a esta transacción")
+    compra = models.OneToOneField(CompraBoleto, on_delete=models.CASCADE, related_name='transaccion_stripe', help_text="Compra asociada a esta transacción")
     payment_intent_id = models.CharField(max_length=100, unique=True, help_text="ID de PaymentIntent en Stripe")
     client_secret = models.CharField(max_length=255, blank=True, null=True, help_text="Client secret del PaymentIntent (solo si se requiere en frontend)")
     estatus = models.CharField(max_length=50, help_text="Estado de la transacción (ej. succeeded, processing, canceled)")
@@ -297,23 +299,37 @@ class TransaccionStripe(models.Model):
     def __str__(self):
         return f"[{self.estatus.upper()}] {self.payment_intent_id} - {self.monto} {self.moneda}"
 
-# class IntentoDePago(models.Model):
-#     payment_intent_id = models.CharField(max_length=100, unique=True)
-#     email = models.EmailField()
-#     tipo_boleto = models.ForeignKey(TipoBoleto, on_delete=models.SET_NULL, null=True, blank=True)
-#     cantidad = models.PositiveIntegerField(default=1)
-#     monto = models.DecimalField(max_digits=10, decimal_places=2)
-#     moneda = models.CharField(max_length=10, default='MXN')
-#     estatus = models.CharField(max_length=50, help_text="Estado actual del intento (ej. created, succeeded, failed)")
-#     metadata = models.JSONField(blank=True, null=True)
-#     creado_en = models.DateTimeField(auto_now_add=True)
-#     actualizado_en = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         db_table = 'pagos_intentos_pago'
-#         verbose_name = 'Intento de pago'
-#         verbose_name_plural = 'Intentos de pago'
-#         ordering = ['-creado_en']
+class BoletoAsignado(models.Model):
+    compra = models.ForeignKey(CompraBoleto, on_delete=models.CASCADE, related_name='boletos_asignados')
+    nombre_asistente = models.CharField(max_length=100)
+    fecha_nacimiento_asistente = models.DateField(help_text="Fecha de nacimiento del asistente")
+    email_asistente = models.EmailField( help_text="Correo electrónico del asistente")
+    foto_asistente = models.URLField(blank=True, null=True, help_text="URL de la foto del asistente alojada en S3")
+    
+    qr_code = models.CharField(max_length=255, unique=True)
+    token_formulario = models.CharField(max_length=64, unique=True, blank=True, null=True)
+    confirmado = models.BooleanField(default=False)
+    
+    fecha_asignacion = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"[{self.estatus.upper()}] {self.payment_intent_id}"
+    class Meta:
+        db_table = 'eventos_boleto_asignado'
+
+    def __str__(self):
+        return f"{self.nombre_asistente} - {self.qr_code[-6:]}"  # Para identificar fácil en admin
+
+    @property
+    def es_menor_edad(self):
+        from datetime import date
+        hoy = date.today()
+        edad = hoy.year - self.fecha_nacimiento_asistente.year - (
+            (hoy.month, hoy.day) < (self.fecha_nacimiento_asistente.month, self.fecha_nacimiento_asistente.day)
+        )
+        return edad < 18
+
+class TokenAsignacion(models.Model):
+    compra = models.ForeignKey(CompraBoleto, on_delete=models.CASCADE)
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    usado = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)

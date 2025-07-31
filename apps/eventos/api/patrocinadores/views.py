@@ -52,26 +52,32 @@ class CrearPatrocinadorView(CreateAPIView):
     
     def create(self, request, *args, **kwargs):
         data = deepcopy(request.data)
-        temp_url = data.get("logo")  # asegúrate de que el frontend mande el campo "logo"
+        temp_url = data.get("logo")
 
+        # Primero: valida los datos
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        # Luego: intenta mover el logo si es temporal
         if isinstance(temp_url, bytes):
             temp_url = temp_url.decode("utf-8")
 
         if isinstance(temp_url, str) and "temp/patrocinadores/" in temp_url:
-            parsed_url = urlparse(temp_url)
-            origen = parsed_url.path.lstrip("/")
-            bucket = config("AWS_STORAGE_BUCKET_NAME")
-            nombre_final = origen.split("/")[-1]
-            destino = f"patrocinadores/logos/{nombre_final}"
+            try:
+                parsed_url = urlparse(temp_url)
+                origen = parsed_url.path.lstrip("/")
+                bucket = config("AWS_STORAGE_BUCKET_NAME")
+                nombre_final = origen.split("/")[-1]
+                destino = f"patrocinadores/logos/{nombre_final}"
 
-            if mover_archivo_s3(bucket, origen, destino):
-                url_final = f"https://{bucket}.s3.amazonaws.com/{destino}"
-                data["logo"] = url_final
-            else:
-                return Response({"error": "No se pudo mover el logo"}, status=500)
+                if mover_archivo_s3(bucket, origen, destino):
+                    url_final = f"https://{bucket}.s3.amazonaws.com/{destino}"
+                    serializer.validated_data["logo"] = url_final
+                else:
+                    return Response({"error": "No se pudo mover el logo"}, status=500)
+            except Exception as e:
+                return Response({"error": f"Error al mover logo: {str(e)}"}, status=500)
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
         patrocinador = serializer.save()
         return Response({"id": patrocinador.id}, status=status.HTTP_201_CREATED)
 

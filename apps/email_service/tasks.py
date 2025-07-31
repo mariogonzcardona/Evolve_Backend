@@ -6,7 +6,8 @@ import threading
 def send_email(data):
     if len(data['to_email']) >= 1:
         from_email = config('EMAIL_HOST_USER')
-        html_template = 'emails/contacto.html'  # Puedes mover la plantilla a templates/email/contacto.html
+        # html_template = 'emails/contacto.html'  # Puedes mover la plantilla a templates/email/contacto.html
+        html_template = f"emails/{data['template']}.html"  # Puedes mover la plantilla a templates/email/contacto.html
         html_message = render_to_string(html_template, data)
 
         message = EmailMessage(
