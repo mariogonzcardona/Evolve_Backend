@@ -11,7 +11,6 @@ from rest_framework.generics import ListAPIView,CreateAPIView
 from botocore.exceptions import BotoCoreError, ClientError
 from decouple import config
 from rest_framework.views import APIView
-from .serializers import LogoUploadSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -44,90 +43,74 @@ class CrearPatrocinadorView(CreateAPIView):
     serializer_class = PatrocinadorSerializer
     permission_classes = [HasAnyRole]
     allowed_roles = [UserRoles.EGPRO]
+    parser_classes = [
+        MultiPartParser,
+        FormParser
+    ]
 
     def post(self, request, *args, **kwargs):
         if getattr(request, 'limited', False):
             raise Throttled(detail="Has realizado demasiados registros. Intenta de nuevo más tarde.")
         return self.create(request, *args, **kwargs)
-    
-    def create(self, request, *args, **kwargs):
-        data = deepcopy(request.data)
-        temp_url = data.get("logo")
 
-        # Primero: valida los datos
-        serializer = self.get_serializer(data=data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Luego: intenta mover el logo si es temporal
-        if isinstance(temp_url, bytes):
-            temp_url = temp_url.decode("utf-8")
-
-        if isinstance(temp_url, str) and "temp/patrocinadores/" in temp_url:
-            try:
-                parsed_url = urlparse(temp_url)
-                origen = parsed_url.path.lstrip("/")
-                bucket = config("AWS_STORAGE_BUCKET_NAME")
-                nombre_final = origen.split("/")[-1]
-                destino = f"patrocinadores/logos/{nombre_final}"
-
-                if mover_archivo_s3(bucket, origen, destino):
-                    url_final = f"https://{bucket}.s3.amazonaws.com/{destino}"
-                    serializer.validated_data["logo"] = url_final
-                else:
-                    return Response({"error": "No se pudo mover el logo"}, status=500)
-            except Exception as e:
-                return Response({"error": f"Error al mover logo: {str(e)}"}, status=500)
-
+        # Guardado automático en S3 usando el ImageField del modelo
         patrocinador = serializer.save()
+
         return Response({"id": patrocinador.id}, status=status.HTTP_201_CREATED)
-
-class LogoUploadView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
     
-    @swagger_auto_schema(
-        operation_description="Subir logo a S3",
-        manual_parameters=[
-            openapi.Parameter(
-                name="archivo",
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=True,
-                description="Archivo de imagen (JPG, PNG)",
-            )
-        ],
-        responses={201: openapi.Response("URL del archivo subido")},
-    )
-    def post(self, request):
-        serializer = LogoUploadSerializer(data=request.data)
-        if serializer.is_valid():
-            archivo = serializer.validated_data["archivo"]
+# class LogoUploadView(APIView):
+#     parser_classes = [MultiPartParser, FormParser]
 
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=config("AWS_ACCESS_KEY_ID"),
-                aws_secret_access_key=config("AWS_SECRET_ACCESS_KEY"),
-                region_name=config("AWS_S3_REGION_NAME"),
-            )
+#     @swagger_auto_schema(
+#         operation_description="Subir logo a S3 (versión final, sin carpeta temporal)",
+#         manual_parameters=[
+#             openapi.Parameter(
+#                 name="archivo",
+#                 in_=openapi.IN_FORM,
+#                 type=openapi.TYPE_FILE,
+#                 required=True,
+#                 description="Archivo de imagen (JPG, PNG)",
+#             )
+#         ],
+#         responses={201: openapi.Response("URL del archivo subido")},
+#     )
+#     def post(self, request):
+#         serializer = LogoUploadSerializer(data=request.data)
+#         if serializer.is_valid():
+#             archivo = serializer.validated_data["archivo"]
 
-            bucket = config("AWS_STORAGE_BUCKET_NAME")
-            filename = f"temp/patrocinadores/{uuid.uuid4()}_{archivo.name}"
+#             s3 = boto3.client(
+#                 "s3",
+#                 aws_access_key_id=config("AWS_ACCESS_KEY_ID"),
+#                 aws_secret_access_key=config("AWS_SECRET_ACCESS_KEY"),
+#                 region_name=config("AWS_S3_REGION_NAME"),
+#             )
 
-            try:
-                s3.upload_fileobj(
-                    archivo,
-                    bucket,
-                    filename,
-                    ExtraArgs={"ContentType": archivo.content_type}
-                )
+#             bucket = config("AWS_STORAGE_BUCKET_NAME")
+#             filename = f"patrocinadores/logos/{uuid.uuid4()}_{archivo.name}"
+#             region = config("AWS_S3_REGION_NAME")
+#             try:
+#                 s3.upload_fileobj(
+#                     archivo,
+#                     bucket,
+#                     filename,
+#                     ExtraArgs={"ContentType": archivo.content_type}
+#                 )
 
-                s3_url = f"https://{bucket}.s3.amazonaws.com/{filename}"
+#                 s3_url = f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
+#                 # Agregar print con emojis
+#                 print("🚀 Archivo subido exitosamente a S3!")
+#                 print(f"📂 URL del archivo: {s3_url}")
+#                 return Response({"url": s3_url}, status=status.HTTP_201_CREATED)
 
-                return Response({"url": s3_url}, status=status.HTTP_201_CREATED)
+#             except (BotoCoreError, ClientError) as e:
+#                 return Response(
+#                     {"error": "No se pudo subir el archivo", "detalle": str(e)},
+#                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                 )
 
-            except (BotoCoreError, ClientError) as e:
-                return Response(
-                    {"error": "No se pudo subir el archivo", "detalle": str(e)},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

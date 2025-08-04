@@ -3,8 +3,8 @@ from apps.eventos.api import routers
 from apps.eventos.api.boletos.views import CrearIntentoPagoView,BoletosEventoActivoViewSet, StripeWebhookView
 from apps.eventos.api.eventos.views import EventoActivoAPIView
 from apps.eventos.api.peleadores.views import PeleadorPublicoListView
-from apps.eventos.api.patrocinadores.views import PatrocinadorPublicoListView,LogoUploadView,TiposPatrocinioListView,CrearPatrocinadorView
-from apps.eventos.api.peleadores.views import PerfilUploadView,RegistroPeleadorPublicoView, PeleadoresConfirmadosListView
+from apps.eventos.api.patrocinadores.views import PatrocinadorPublicoListView,TiposPatrocinioListView,CrearPatrocinadorView
+from apps.eventos.api.peleadores.views import RegistroPeleadorPublicoView, PeleadoresConfirmadosListView
 
 urlpatterns = [
     path('eventos/activo/', EventoActivoAPIView.as_view(), name='evento-activo'),
@@ -22,7 +22,7 @@ urlpatterns = [
     path('patrocinadores/registro', CrearPatrocinadorView.as_view(), name='patrocinadores'),
     path('patrocinadores/beneficios', TiposPatrocinioListView.as_view(), name='patrocinadores'),
     
-    path("subir-logo/", LogoUploadView.as_view(), name="subir-logo"),
-    path("subir-imagen-perfil/", PerfilUploadView.as_view(), name="subir-imagen-perfil"),
+    # path("subir-logo/", LogoUploadView.as_view(), name="subir-logo"),
+    # path("subir-imagen-perfil/", PerfilUploadView.as_view(), name="subir-imagen-perfil"),
     path('', include(routers)),  # incluir todos los viewsets
 ]

@@ -18,6 +18,7 @@ def procesar_post_compra(compra: CompraBoleto):
     # 🎫 Asignar boleto directo si asistirá
     # Si el comprador asistirá y no tiene un boleto asignado, se genera un QR y se asigna el boleto.
     # Si ya tiene un boleto asignado, no se asigna otro.
+    qr_url=None
     if asistira and not BoletoAsignado.objects.filter(compra=compra, email_asistente=comprador.email).exists():
         qr_url = generar_qr(compra.id, comprador.email)
         BoletoAsignado.objects.create(

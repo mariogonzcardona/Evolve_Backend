@@ -1,8 +1,9 @@
-from PIL import Image, ImageDraw, ImageOps
 import uuid
 import io
-import boto3
+from PIL import Image, ImageDraw, ImageOps
 import qrcode
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 def generar_qr_personalizado(compra_id, email):
     # Datos del QR
@@ -22,7 +23,7 @@ def generar_qr_personalizado(compra_id, email):
     qr_img = qr.make_image(fill_color="#2f6bc5", back_color="white").convert("RGB")
     size = qr_img.size
 
-    # Crear máscara con bordes redondeados
+    # Máscara con bordes redondeados
     mask = Image.new("L", size, 0)
     draw = ImageDraw.Draw(mask)
     draw.rounded_rectangle([0, 0, size[0], size[1]], radius=50, fill=255)
@@ -35,19 +36,17 @@ def generar_qr_personalizado(compra_id, email):
     final_img = Image.new("RGB", size, (255, 255, 255))
     final_img.paste(qr_img, mask=qr_img.split()[3])
 
-    # Subir a S3
+    # Guardar en memoria
     in_mem_file = io.BytesIO()
     final_img.save(in_mem_file, format="PNG")
     in_mem_file.seek(0)
 
-    s3 = boto3.client("s3")
-    bucket = "evolve-backend"
-    object_key = f"boletos_qr/qr_{compra_id}_{uuid.uuid4().hex[:6]}.png"
-    s3.upload_fileobj(
-        in_mem_file,
-        bucket,
-        object_key,
-        ExtraArgs={"ContentType": "image/png"}
-    )
+    # Nombre de archivo en el bucket
+    filename = f"boletos_qr/qr_{compra_id}_{uuid.uuid4().hex[:6]}.png"
 
-    return f"https://{bucket}.s3.amazonaws.com/{object_key}"
+    # Usar default_storage (django-storages → S3)
+    file_content = ContentFile(in_mem_file.read())
+    default_storage.save(filename, file_content)
+
+    # Retornar URL pública desde default_storage
+    return default_storage.url(filename)

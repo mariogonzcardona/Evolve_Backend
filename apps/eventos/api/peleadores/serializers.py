@@ -14,7 +14,7 @@ class EventoSimpleSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'fecha_evento']
 
 class PeleadorRegistroSerializer(serializers.ModelSerializer):
-    nacionalidad = serializers.DictField(write_only=True)
+    nacionalidad = serializers.CharField(write_only=True)
     direccion = serializers.DictField(write_only=True)
     email = serializers.EmailField()
 
@@ -52,54 +52,56 @@ class PeleadorRegistroSerializer(serializers.ModelSerializer):
         if Peleador.objects.filter(email=value).exists():
             raise serializers.ValidationError("Este correo ya está registrado para el evento.")
         return value
+    
+    def validate_foto(self, value):
+        """
+        Validación de la imagen subida.
+        """
+        max_size_mb = 5
+        if value.size > max_size_mb * 1024 * 1024:
+            raise serializers.ValidationError(f"La imagen supera los {max_size_mb}MB.")
+        return value
 
     def create(self, validated_data):
-        nacionalidad_data = validated_data.pop("nacionalidad", {})
+        codigo = str(validated_data.pop("nacionalidad", "")).lower()
         direccion_data = validated_data.pop("direccion", {})
 
         try:
             with transaction.atomic():
-                # Validación de nacionalidad
+                # Nacionalidad
                 nacionalidad = Nacionalidad.objects.filter(
-                    codigo_iso=nacionalidad_data.get("codigo_iso"), activo=True
+                    codigo_iso=codigo,
+                    activo=True
                 ).first()
                 if not nacionalidad:
                     raise serializers.ValidationError({"nacionalidad": "No válida o no activa."})
 
-                # Validación de evento activo
+                # Evento activo
                 evento = Evento.objects.filter(esta_activo=True).first()
                 if not evento:
                     raise serializers.ValidationError({"evento": "No hay evento activo para registrar."})
 
-                # Normaliza el email
+                # Email normalizado
                 validated_data["email"] = validated_data["email"].strip().lower()
 
-                # Crea dirección y aplica al diccionario final
+                # Dirección
                 direccion = Direccion.objects.create(**direccion_data)
                 validated_data["nacionalidad"] = nacionalidad
                 validated_data["direccion"] = direccion
                 validated_data["evento"] = evento
 
-                # Log de datos para depuración
-                print("Datos validados para crear peleador:", validated_data)
-
-                # Usar el método padre para aplicar validaciones de modelo
+                # Guardar y subir la imagen automáticamente a S3
                 peleador = super().create(validated_data)
                 return peleador
 
         except IntegrityError as e:
-            print("Error de integridad detectado:")
-            import traceback
-            traceback.print_exc()
             raise serializers.ValidationError({
-                "email": "Ya existe un peleador registrado con este correo." if "email" in str(e) else "Error de integridad en la base de datos.",
+                "email": "Ya existe un peleador registrado con este correo."
+                if "email" in str(e) else "Error de integridad en la base de datos.",
                 "detalle": str(e),
             })
 
         except Exception as e:
-            print("Error general durante creación de peleador:")
-            import traceback
-            traceback.print_exc()
             raise serializers.ValidationError({
                 "detalle": f"Error al crear el peleador: {str(e)}"
             })

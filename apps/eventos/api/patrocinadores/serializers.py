@@ -14,15 +14,15 @@ class PatrocinadorPublicSerializer(serializers.ModelSerializer):
             "twitter",
         ]
 
-class LogoUploadSerializer(serializers.Serializer):
-    archivo = serializers.ImageField()
+# class LogoUploadSerializer(serializers.Serializer):
+#     archivo = serializers.ImageField()
 
-    def validate_archivo(self, value):
-        # Validación opcional extra
-        max_size_mb = 5
-        if value.size > max_size_mb * 1024 * 1024:
-            raise serializers.ValidationError(f"La imagen supera los {max_size_mb}MB.")
-        return value
+#     def validate_archivo(self, value):
+#         # Validación opcional extra
+#         max_size_mb = 5
+#         if value.size > max_size_mb * 1024 * 1024:
+#             raise serializers.ValidationError(f"La imagen supera los {max_size_mb}MB.")
+#         return value
 
 class TipoPatrociniosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +35,7 @@ class PatrocinadorSerializer(serializers.ModelSerializer):
         queryset=TipoPatrocinio.objects.all(),
         many=True
     )
+    logo = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Patrocinador
@@ -57,3 +58,12 @@ class PatrocinadorSerializer(serializers.ModelSerializer):
             "mensaje",
             "logo"
         ]
+
+    def validate_logo(self, value):
+        if value:
+            max_size_mb = 5
+            if value.size > max_size_mb * 1024 * 1024:
+                raise serializers.ValidationError(f"La imagen supera los {max_size_mb} MB.")
+            if value.image.format.lower() not in ["jpeg", "png", "jpg"]:
+                raise serializers.ValidationError("Formato no válido. Usa JPG o PNG.")
+        return value
