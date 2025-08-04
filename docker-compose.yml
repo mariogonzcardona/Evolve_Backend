@@ -1,62 +1,36 @@
+version: "3.9"
+
 volumes:
-  local_postgres_data: {}
+  postgres_data: {}
   redis_data: {}
 
 services:
   web:
-    build: 
+    build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     container_name: evolve_backend
     volumes:
       - .:/code
-    env_file: .env
-    environment:
-      - ENVIRONMENT=${ENVIRONMENT}
+    env_file: .env.${ENVIRONMENT}
     ports:
       - "8080:8000"
     depends_on:
       - db
-      # - redis_service
     stdin_open: true
     tty: true
-    restart: on-failure
+    restart: unless-stopped
 
   db:
     image: postgres:15
     container_name: evolve_db
     ports:
       - "5433:5432"
-    env_file: .env
+    env_file: .env.${ENVIRONMENT}
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data:Z
-    restart: on-failure
-
-  # redis_service:
-  #   image: "redis:alpine"
-  #   container_name: evolve_redis
-  #   volumes:
-  #     - redis_data:/data
-  #   restart: on-failure
-  #   env_file: .env
-
-  # tests:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   container_name: evolve_tests
-  #   volumes:
-  #     - .:/code
-  #   env_file: .env
-  #   environment:
-  #     - ENVIRONMENT=local
-  #     - RUN_TESTS=true  # 👈 Esta variable evita que se ejecute runserver
-  #     - DJANGO_SETTINGS_MODULE=config.settings.local
-  #   depends_on:
-  #     - db
-  #   command: >
-  #     sh -c "pytest --maxfail=1 --disable-warnings -v"
+      - postgres_data:/var/lib/postgresql/data:Z
+    restart: unless-stopped
