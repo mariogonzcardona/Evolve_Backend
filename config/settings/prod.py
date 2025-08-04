@@ -1,5 +1,6 @@
 # prod.py
 from .base import *
+from decouple import config, Csv
 
 DEBUG = False
 
@@ -19,8 +20,9 @@ DATABASES = {
 
 # ===== AWS S3 - PROD =====
 AWS_STORAGE_BUCKET_NAME = "evolve-backend-prod"
-AWS_S3_REGION_NAME = "us-east-1"  # ajusta si usas otra región
+AWS_S3_REGION_NAME = "us-east-1"  # Ajustar si usas otra región
 AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = None  # No usar ACLs heredadas
 
 # Archivos estáticos en S3
 STATICFILES_STORAGE = "config.settings.storage_backends.StaticStorage"
@@ -29,6 +31,7 @@ STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/"
 # Archivos subidos (media) en S3
 DEFAULT_FILE_STORAGE = "config.settings.storage_backends.MediaStorage"
 MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
+MEDIA_ROOT = None  # No usar almacenamiento local
 
 # Seguridad extra
 SECURE_SSL_REDIRECT = True
