@@ -2,6 +2,8 @@ from rest_framework import serializers
 from apps.eventos.models import Peleador, Nacionalidad, Direccion, Evento
 from datetime import date
 from django.db import transaction, IntegrityError
+import json
+from apps.eventos.api.serializers import DireccionSerializer
 
 class NacionalidadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,9 +17,9 @@ class EventoSimpleSerializer(serializers.ModelSerializer):
 
 class PeleadorRegistroSerializer(serializers.ModelSerializer):
     nacionalidad = serializers.CharField(write_only=True)
-    direccion = serializers.DictField(write_only=True)
+    direccion = serializers.CharField(write_only=True)
     email = serializers.EmailField()
-
+    
     class Meta:
         model = Peleador
         fields = [
@@ -46,7 +48,7 @@ class PeleadorRegistroSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "email": {"validators": []},  # Desactiva validadores automáticos
         }
-
+    
     def validate_email(self, value):
         value = value.strip().lower()
         if Peleador.objects.filter(email=value).exists():
@@ -64,7 +66,7 @@ class PeleadorRegistroSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         codigo = str(validated_data.pop("nacionalidad", "")).lower()
-        direccion_data = validated_data.pop("direccion", {})
+        direccion_str = validated_data.pop("direccion")
 
         try:
             with transaction.atomic():
@@ -83,9 +85,17 @@ class PeleadorRegistroSerializer(serializers.ModelSerializer):
 
                 # Email normalizado
                 validated_data["email"] = validated_data["email"].strip().lower()
+                
+                try:
+                    direccion_dict = json.loads(direccion_str)
+                except Exception:
+                    raise serializers.ValidationError({"direccion": "Formato inválido de dirección. Debe ser un JSON válido."})
 
                 # Dirección
-                direccion = Direccion.objects.create(**direccion_data)
+                direccion_serializer = DireccionSerializer(data=direccion_dict)
+                direccion_serializer.is_valid(raise_exception=True)
+                direccion = direccion_serializer.save()
+                
                 validated_data["nacionalidad"] = nacionalidad
                 validated_data["direccion"] = direccion
                 validated_data["evento"] = evento

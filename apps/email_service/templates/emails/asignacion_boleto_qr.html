@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
-  <title>Boleto Digital - EGPro</title>
+  <title>Confirmación de Registro - EGPro</title>
 </head>
-
 <body style="font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f5f7fa; margin: 0; padding: 30px;">
-  <table
-    style="max-width: 600px; width: 100%; margin: auto; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden;">
 
+  <table style="max-width: 600px; width: 100%; margin: auto; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden;">
+    
     <!-- Header -->
     <tr>
       <td style="background-color: #5295fa; padding: 24px; text-align: center;">
@@ -37,40 +35,17 @@
         </div>
 
         {% if qr_url %}
-        <div style="text-align: center; margin: 32px 0;">
-          <img src="{{ qr_url }}" alt="Código QR" width="200"
-            style="border-radius: 12px; border: 1px solid #ccc; padding: 10px; background: #fff;" />
+        <div style="text-align: center; margin: 32px 0 0 0;">
+          <img src="{{ qr_url }}" alt="Código QR" width="200" style="border-radius: 12px; border: 1px solid #ccc; padding: 10px; background: #fff;" />
           <p style="margin-top: 12px; font-size: 14px; color: #555;">Presente este código al ingresar al evento.</p>
         </div>
         {% endif %}
 
-        {% if formulario_url %}
-        <div
-          style="background-color: #eef7fc; padding: 18px; border-radius: 7px; text-align: center; margin: 32px 0 20px;">
-          <p style="margin: 0 0 10px; font-size: 15px; color: #686868;">
-            ¿Adquirió más de un boleto? Comparta el siguiente enlace con sus invitados para que registren sus datos y
-            reciban su boleto personal:
-          </p>
-          <a href="{{ formulario_url }}"
-            style="display: inline-block; padding: 10px 18px; background: #227bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
-            Registrar invitados
-          </a>
-          <div style="margin-top: 8px;">
-            <span style="font-size: 13px; color: #555;">Enlace para copiar/compartir:</span>
-            <div
-              style="padding: 8px; border: 1px solid #ccd6eb; border-radius: 5px; background: #f8faff; margin: 8px 0; font-size: 13px; color: #183a63; word-break: break-all;">
-              {{ formulario_url }}
-            </div>
-          </div>
-        </div>
-        {% endif %}
-
-        <div
-          style="background: #f8fafc; border: 1px solid #d7e3f8; border-radius: 7px; padding: 18px; margin-bottom: 24px; color: #333; font-size: 15px;">
+        <div style="background: #f8fafc; border: 1px solid #d7e3f8; border-radius: 7px; padding: 18px; margin-top: 32px; margin-bottom: 24px; color: #333; font-size: 15px;">
           <strong>Indicaciones de acceso:</strong>
           <ul style="margin: 12px 0 0 18px; padding: 0; color: #314c7b;">
             <li>Presente este correo y su código QR al ingresar.</li>
-            <li>Presentar identificación oficial.</li>
+            <li>Presentar identificación oficial en caso de ser mayor de edad.</li>
             <li>No se permite el acceso con objetos peligrosos.</li>
             <li>El acceso es exclusivo para personas con boleto.</li>
             <li>Por favor, llegue con al menos 30 minutos de anticipación.</li>
@@ -86,13 +61,11 @@
       <td style="background-color: #fafafa; text-align: center; padding: 20px;">
         <p style="font-size: 12px; color: #777;">
           Este mensaje ha sido enviado automáticamente por evolvegrapplingpro.com<br />
-          Para cualquier consulta, escríbanos a <a
-            href="mailto:contacto@evolvegrapplingpro.com">contacto@evolvegrapplingpro.com</a>
+          Para cualquier consulta, escríbanos a <a href="mailto:contacto@evolvegrapplingpro.com">contacto@evolvegrapplingpro.com</a>
         </p>
       </td>
     </tr>
 
   </table>
 </body>
-
 </html>

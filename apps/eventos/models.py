@@ -266,7 +266,7 @@ class CompraBoleto(models.Model):
     class Meta:
         db_table = 'eventos_compra_boleto'
         verbose_name = 'Compra de boleto'
-        verbose_name_plural = 'Compras de boletos'
+        verbose_name_plural = 'Compra de boletos'
         ordering = ['-fecha_compra']
 
     def __str__(self):
@@ -300,7 +300,7 @@ class TransaccionStripe(models.Model):
         return f"[{self.estatus.upper()}] {self.payment_intent_id} - {self.monto} {self.moneda}"
 
 
-class BoletoAsignado(models.Model):
+class AsignacionBoletos(models.Model):
     compra = models.ForeignKey(CompraBoleto, on_delete=models.CASCADE, related_name='boletos_asignados')
     nombre_asistente = models.CharField(max_length=100)
     fecha_nacimiento_asistente = models.DateField(help_text="Fecha de nacimiento del asistente")
@@ -308,13 +308,17 @@ class BoletoAsignado(models.Model):
     foto_asistente = models.ImageField(upload_to="boletos/asistentes/",blank=True,null=True,help_text="Foto del asistente")
     
     qr_code = models.CharField(max_length=255, unique=True)
-    token_formulario = models.CharField(max_length=64, unique=True, blank=True, null=True)
+    token_formulario = models.CharField(max_length=64)
     confirmado = models.BooleanField(default=False)
     
     fecha_asignacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'eventos_boleto_asignado'
+        db_table = 'eventos_asignacion_boletos'
+        verbose_name = 'Asignación de boleto'
+        verbose_name_plural = 'Asignacion de boletos'
+        ordering = ['-fecha_asignacion']
+        
 
     def __str__(self):
         return f"{self.nombre_asistente} - {self.qr_code[-6:]}"  # Para identificar fácil en admin
@@ -328,8 +332,14 @@ class BoletoAsignado(models.Model):
         )
         return edad < 18
 
-class TokenAsignacion(models.Model):
+class AsignacionToken(models.Model):
     compra = models.ForeignKey(CompraBoleto, on_delete=models.CASCADE)
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
     usado = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'eventos_asignacion_token'
+        verbose_name = 'Asignación de token'
+        verbose_name_plural = 'Asignacion de tokens'

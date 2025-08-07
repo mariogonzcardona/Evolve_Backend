@@ -54,7 +54,8 @@ class RegistroPeleadorPublicoView(CreateAPIView):
         return self.create(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        # data = request.data.copy()  # importante: copia mutable
+        data = request.data # importante: copia mutable
+        print("Datos recibidos: desde RegistroPeleadorPublicoView", data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

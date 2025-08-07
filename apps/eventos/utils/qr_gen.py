@@ -1,14 +1,21 @@
 import uuid
 import io
+import json
 from PIL import Image, ImageDraw, ImageOps
 import qrcode
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
-def generar_qr_personalizado(compra_id, email):
+def generar_qr_personalizado(oken_obj,nombre_asistente,email_asistente):
     # Datos del QR
-    qr_data = f"compra:{compra_id}|email:{email}|uuid:{uuid.uuid4()}"
-
+    # qr_data = f"compra:{compra_id}|email:{email}|uuid:{uuid.uuid4()}"
+    qr_info = {
+        "token": oken_obj.token,
+        "nombre_asistente": nombre_asistente,
+        "email_asistente": email_asistente,
+        "compra_id": oken_obj.compra.id,
+    }
+    qr_data = json.dumps(qr_info, separators=(',', ':'))
     # Crear QR en color sólido
     qr = qrcode.QRCode(
         version=1,
@@ -20,7 +27,7 @@ def generar_qr_personalizado(compra_id, email):
     qr.make(fit=True)
 
     # Imagen QR con color personalizado
-    qr_img = qr.make_image(fill_color="#2f6bc5", back_color="white").convert("RGB")
+    qr_img = qr.make_image(fill_color="#17142A", back_color="white").convert("RGB")
     size = qr_img.size
 
     # Máscara con bordes redondeados
@@ -42,7 +49,7 @@ def generar_qr_personalizado(compra_id, email):
     in_mem_file.seek(0)
 
     # Nombre de archivo en el bucket
-    filename = f"boletos_qr/qr_{compra_id}_{uuid.uuid4().hex[:6]}.png"
+    filename = f"media/boletos_qr/qr_{oken_obj.compra.id}_{oken_obj.token}.png"
 
     # Usar default_storage (django-storages → S3)
     file_content = ContentFile(in_mem_file.read())

@@ -1,6 +1,5 @@
 import stripe
 from rest_framework import viewsets
-from apps.eventos.api.boletos.serializers import TipoBoletoPublicSerializer,BoletosEventoActivoSerializer
 from apps.users.api.permissions import HasAnyRole
 from apps.users.enums import UserRoles
 from rest_framework.views import APIView
@@ -13,15 +12,21 @@ from stripe.error import CardError, InvalidRequestError, AuthenticationError, AP
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from rest_framework.exceptions import Throttled
-from apps.eventos.models import CompraBoleto, TransaccionStripe, Comprador, Direccion, TipoBoleto, Evento, Peleador
+from apps.eventos.api.boletos.serializers import TipoBoletoPublicSerializer,BoletosEventoActivoSerializer
+from apps.eventos.models import CompraBoleto, TransaccionStripe, Comprador, Direccion, TipoBoleto, Evento, Peleador, AsignacionToken, AsignacionBoletos
+from apps.eventos.services.post_compra import procesar_post_compra
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from apps.eventos.services.post_compra import procesar_post_compra
 from datetime import datetime
+from apps.eventos.utils.qr_gen import generar_qr_personalizado
+from apps.email_service.tasks import send_email_in_thread
+
 
 stripe.api_key = config("STRIPE_SECRET_KEY")
 endpoint_secret = config("STRIPE_WEBHOOK_SECRET")
 
+# Este Enpoint es llamado por el Webhook de Stripe despues de un pago exitoso
+# y se encarga de procesar la compra, asignar boletos y enviar correos
 @method_decorator(csrf_exempt, name='dispatch')
 class StripeWebhookView(APIView):
     permission_classes = [AllowAny]
@@ -159,7 +164,6 @@ class StripeWebhookView(APIView):
         print("ℹ️ Tipo de evento no manejado, ignorado")
         return Response({"mensaje": "Evento ignorado"}, status=200)
 
-
 class TipoBoletoPublicViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TipoBoleto.objects.filter(activo=True).order_by('orden')
     serializer_class = TipoBoletoPublicSerializer
@@ -220,7 +224,6 @@ class CrearIntentoPagoView(APIView):
                 "evento": datos.get("evento", "EvolveGP2025"),
                 "id_peleador": str(datos.get("id_peleador", "")),
                 "esAsistente": str(datos.get("esAsistente", "true")).lower(),
-                
             }
 
             # Crear el PaymentIntent
@@ -247,3 +250,144 @@ class CrearIntentoPagoView(APIView):
             return Response({"error": "Error general de Stripe. Intenta con otra tarjeta."}, status=500)
         except Exception as e:
             return Response({"error": str(e)}, status=400)
+
+class EstadoAsignacionBoletosView(APIView):
+    permission_classes = [AllowAny]  # Pública, para acceso de asistentes
+
+    def get(self, request, token):
+        try:
+            # Buscar token y compra asociada
+            token_obj = AsignacionToken.objects.get(token=token)
+            compra = token_obj.compra
+            total_boletos = compra.cantidad
+
+            # Contar boletos asignados
+            asignados = AsignacionBoletos.objects.filter(compra=compra).count()
+            restantes = total_boletos - asignados
+
+            # Responder con el conteo actual
+            if restantes <= 0:
+                return Response({
+                    "success": False,
+                    "message": "Todos los boletos de esta compra ya han sido asignados.",
+                    "boletos_restantes": 0
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    "success": True,
+                    "message": f"Quedan {restantes} boletos por asignar.",
+                    "boletos_restantes": restantes
+                }, status=status.HTTP_200_OK)
+        except AsignacionToken.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": "Token no válido.",
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "message": f"Error interno: {str(e)}",
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class RegistroAsignacionBoletoView(APIView):
+    permission_classes = [AllowAny]  # Pública para asistentes
+
+    def post(self, request, token):
+        # Buscar token y compra asociada
+        try:
+            token_obj = AsignacionToken.objects.get(token=token)
+            compra = token_obj.compra
+        except AsignacionToken.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": "Token no válido."
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        total_boletos = compra.cantidad
+        asignados = AsignacionBoletos.objects.filter(compra=compra).count()
+        restantes = total_boletos - asignados
+
+        # 1️⃣ Validar que aún hay boletos disponibles
+        if restantes <= 0:
+            return Response({
+                "success": False,
+                "message": "Todos los boletos de esta compra ya han sido asignados.",
+                "boletos_restantes": 0
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 2️⃣ Validar que el correo no esté repetido para la misma compra
+        email_asistente = request.data.get("email_asistente")
+        if not email_asistente:
+            return Response({
+                "success": False,
+                "message": "El campo 'email_asistente' es obligatorio."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if AsignacionBoletos.objects.filter(compra=compra, email_asistente=email_asistente).exists():
+            return Response({
+                "success": False,
+                "message": "Este correo ya fue registrado para esta compra."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 3️⃣ Obtener y validar los demás datos requeridos
+        nombre_asistente = request.data.get("nombre_asistente")
+        fecha_nacimiento = request.data.get("fecha_nacimiento_asistente")
+        # Puedes agregar validaciones extra según tus necesidades
+        if not nombre_asistente or not fecha_nacimiento:
+            return Response({
+                "success": False,
+                "message": "Nombre y fecha de nacimiento son obligatorios."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # 4️⃣ Registrar el boleto
+        try:
+            qr_url=generar_qr_personalizado(token_obj,nombre_asistente,email_asistente)
+            boleto = AsignacionBoletos.objects.create(
+                compra=compra,
+                nombre_asistente=nombre_asistente,
+                fecha_nacimiento_asistente=fecha_nacimiento,
+                email_asistente=email_asistente,
+                foto_asistente=request.data.get("foto_asistente"),  # Debe ser un archivo, valida si llega
+                
+                qr_code=qr_url,  # Implementa aquí tu generación de QR
+                
+                token_formulario=str(token_obj.token),
+                confirmado=True,
+                fecha_asignacion=timezone.now()
+            )
+            
+            context = {
+                "nombre_completo": f"{nombre_asistente}".strip(),
+                "nombre_evento": compra.evento.nombre,
+                "fecha_evento": compra.evento.fecha_evento.strftime("%d de %B de %Y"),
+                "hora_evento": compra.evento.hora_inicio.strftime("%I:%M %p"),
+                "direccion_evento": compra.evento.direccion,
+                "qr_url": qr_url,
+            }
+            data = {
+                "email_subject": "🎟️ Tu boleto para Evolve Grappling Pro",
+                "to_email": [email_asistente],
+                "template": "asignacion_boleto_qr",
+                "correo": config("EMAIL_HOST_USER"),
+                **context,
+            }
+            print(f"Datos para enviar el correo: {data}")
+            send_email_in_thread(data)
+            
+            # 👇🏼 1️⃣ **Verifica si ya no quedan boletos y marca el token como usado**
+            asignados_total = AsignacionBoletos.objects.filter(compra=compra).count()
+            if asignados_total >= compra.cantidad:
+                token_obj.usado = True
+                token_obj.save()
+                print(f"Token {token_obj.token} marcado como usado.")
+            
+            return Response({
+                "success": True,
+                "message": "¡Registro exitoso! El boleto ha sido asignado.",
+                "boleto_id": boleto.id
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "message": f"Error interno: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

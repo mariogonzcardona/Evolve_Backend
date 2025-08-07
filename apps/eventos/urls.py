@@ -1,6 +1,6 @@
 from django.urls import path, include
 from apps.eventos.api import routers
-from apps.eventos.api.boletos.views import CrearIntentoPagoView,BoletosEventoActivoViewSet, StripeWebhookView
+from apps.eventos.api.boletos.views import CrearIntentoPagoView,BoletosEventoActivoViewSet, StripeWebhookView, EstadoAsignacionBoletosView,RegistroAsignacionBoletoView
 from apps.eventos.api.eventos.views import EventoActivoAPIView
 from apps.eventos.api.peleadores.views import PeleadorPublicoListView
 from apps.eventos.api.patrocinadores.views import PatrocinadorPublicoListView,TiposPatrocinioListView,CrearPatrocinadorView
@@ -13,6 +13,8 @@ urlpatterns = [
     path("boletos/stripe/webhook/", StripeWebhookView.as_view(), name="stripe-webhook"),
     path('boletos/stripe/pago', CrearIntentoPagoView.as_view(), name='stripe-pago'),
     path('boletos/activos/', BoletosEventoActivoViewSet.as_view({'get': 'list'}), name='boletos-activos'),
+    path('boletos/estado/<uuid:token>/', EstadoAsignacionBoletosView.as_view(), name='estado-asignacion-boletos'),
+    path('boletos/registrar/<uuid:token>/', RegistroAsignacionBoletoView.as_view(), name='registro-boleto-asignado'),
     
     path('peleadores/estelares/', PeleadorPublicoListView.as_view(), name='peleadores-estelares'),
     path('peleadores/activos/', PeleadoresConfirmadosListView.as_view(), name='peleadores-activos'),
