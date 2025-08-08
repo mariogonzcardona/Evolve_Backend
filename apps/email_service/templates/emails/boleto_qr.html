@@ -40,16 +40,35 @@
         <div style="text-align: center; margin: 32px 0;">
           <img src="{{ qr_url }}" alt="Código QR" width="200"
             style="border-radius: 12px; border: 1px solid #ccc; padding: 10px; background: #fff;" />
-          <p style="margin-top: 12px; font-size: 14px; color: #555;">Presente este código al ingresar al evento.</p>
+          <!-- <p style="margin-top: 12px; font-size: 14px; color: #555;">Presente este código al ingresar al evento.</p> -->
         </div>
         {% endif %}
 
-        {% if formulario_url %}
+        {% if formulario_url and cantidad_boletos > 1 %}
         <div
           style="background-color: #eef7fc; padding: 18px; border-radius: 7px; text-align: center; margin: 32px 0 20px;">
           <p style="margin: 0 0 10px; font-size: 15px; color: #686868;">
             ¿Adquirió más de un boleto? Comparta el siguiente enlace con sus invitados para que registren sus datos y
-            reciban su boleto personal:
+            reciban su QR personal:
+          </p>
+          <a href="{{ formulario_url }}"
+            style="display: inline-block; padding: 10px 18px; background: #227bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">
+            Registrar invitados
+          </a>
+          <div style="margin-top: 8px;">
+            <span style="font-size: 13px; color: #555;">Enlace para copiar/compartir:</span>
+            <div
+              style="padding: 8px; border: 1px solid #ccd6eb; border-radius: 5px; background: #f8faff; margin: 8px 0; font-size: 13px; color: #183a63; word-break: break-all;">
+              {{ formulario_url }}
+            </div>
+          </div>
+        </div>
+        {% elif formulario_url and cantidad_boletos == 1 %}
+        <div
+          style="background-color: #eef7fc; padding: 18px; border-radius: 7px; text-align: center; margin: 32px 0 20px;">
+          <p style="margin: 0 0 10px; font-size: 15px; color: #686868;">
+            ¿Adquirió un boleto como regalo? Comparta el siguiente enlace con la persona indicada para que registre sus datos y
+            reciba su QR personal:
           </p>
           <a href="{{ formulario_url }}"
             style="display: inline-block; padding: 10px 18px; background: #227bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-bottom: 10px;">

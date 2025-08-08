@@ -27,7 +27,7 @@ def procesar_post_compra(compra: CompraBoleto):
             nombre_asistente=comprador.nombre,
             email_asistente=comprador.email,
             fecha_nacimiento_asistente=comprador.fecha_nacimiento,
-            qr_code=qr_url,
+            qr_code=str(qr_url) if qr_url else None,
             token_formulario=token,
             confirmado=True,
         )
@@ -48,7 +48,8 @@ def procesar_post_compra(compra: CompraBoleto):
         "hora_evento": compra.evento.hora_inicio.strftime("%I:%M %p"),
         "direccion_evento": compra.evento.direccion,
         "qr_url": qr_url,
-        "formulario_url": formulario_url,
+        "formulario_url": str(formulario_url) if formulario_url else None,
+        "cantidad_boletos": cantidad,
     }
     print(f"Contexto para el correo: {context}")
 

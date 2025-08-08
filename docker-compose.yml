@@ -33,11 +33,11 @@ services:
       - postgres_data:/var/lib/postgresql/data:Z
     restart: unless-stopped
 
-  ngrok:
-      image: ngrok/ngrok:latest
-      container_name: ngrok
-      ports:
-        - "4040:4040"
-      command: http web:8080
-      env_file:
-        - .env
+  # ngrok:
+  #     image: ngrok/ngrok:latest
+  #     container_name: ngrok
+  #     ports:
+  #       - "4040:4040"
+  #     command: http web:8080
+  #     env_file:
+  #       - .env

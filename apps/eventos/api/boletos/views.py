@@ -232,7 +232,9 @@ class CrearIntentoPagoView(APIView):
                 currency=currency,
                 metadata=metadata,
             )
-
+            print(f"💳 PaymentIntent creado: {intent.id} para {email}")
+            # Mensaje de éxito
+            print(f"✅ Intento de pago creado con éxito para {email}")
             return Response({
                 "clientSecret": intent.client_secret,
                 "paymentIntentId": intent.id  # Puedes guardarlo después
