@@ -35,22 +35,7 @@ fi
 # Iniciar el servidor según entorno
 if [ "$ENVIRONMENT" = "local" ]; then
   echo "🚀 Iniciando el servidor de desarrollo..."
-  python manage.py runserver 0.0.0.0:8000 &
-  BACKEND_PID=$!
-
-  echo "⏳ Esperando a que Ngrok esté listo..."
-  for i in {1..20}; do
-    if curl --silent http://localhost:4040/api/tunnels >/dev/null; then
-      echo "✅ Ngrok listo."
-      break
-    fi
-    sleep 1
-  done
-  python ngrok_tunnel.py
-
-  # Esperar a que el backend termine (para no matar el proceso principal)
-  wait $BACKEND_PID
-
+  python manage.py runserver 0.0.0.0:8000
 else
   echo "🚀 Iniciando el servidor de producción..."
   exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
