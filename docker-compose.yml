@@ -10,6 +10,10 @@ services:
       dockerfile: Dockerfile
     container_name: evolve_backend
     env_file: .env
+    environment:
+      - RUN_MIGRATIONS=${RUN_MIGRATIONS}
+      - RUN_COLLECTSTATIC=${RUN_COLLECTSTATIC}
+      - RUN_FIXTURES=${RUN_FIXTURES}
     volumes:
       - .:/code
     ports:
