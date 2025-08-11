@@ -4,9 +4,10 @@ from django.core.asgi import get_asgi_application
 
 # Lee el entorno desde .env y selecciona settings
 env = config('ENVIRONMENT', default='local').lower()
-
-if env == 'prod' or env == 'production':
+if env in ('prod','production'):
     settings_module = 'config.settings.prod'
+elif env in ('dev','development'):
+    settings_module = 'config.settings.dev'
 else:
     settings_module = 'config.settings.local'
 

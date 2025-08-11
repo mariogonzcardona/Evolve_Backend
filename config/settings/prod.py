@@ -3,10 +3,8 @@ from .base import *
 from decouple import config, Csv
 
 DEBUG = False
-
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-# Base de datos (sin cambios)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -18,22 +16,29 @@ DATABASES = {
     }
 }
 
-# ===== AWS S3 - PROD =====
 AWS_STORAGE_BUCKET_NAME = "evolve-backend-prod"
-AWS_S3_REGION_NAME = "us-east-1"  # Ajustar si usas otra región
-AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = None  # No usar ACLs heredadas
+# AWS_S3_REGION_NAME ya viene de base.py
 
-# Archivos estáticos en S3
-STATICFILES_STORAGE = "config.settings.storage_backends.StaticStorage"
+STORAGES = {
+    "default": {  # Media
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "location": "media",
+        },
+    },
+    "staticfiles": {  # Static
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "location": "static",
+        },
+    },
+}
+
 STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/"
+MEDIA_URL  = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
 
-# Archivos subidos (media) en S3
-DEFAULT_FILE_STORAGE = "config.settings.storage_backends.MediaStorage"
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
-MEDIA_ROOT = None  # No usar almacenamiento local
-
-# Seguridad extra
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

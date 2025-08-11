@@ -1,15 +1,15 @@
-# local.py
+# dev.py
 from .base import *
+from decouple import config, Csv
 
-DEBUG = True
+DEBUG = False  # en AWS dev normalmente HTTPS real; si quieres True, súbelo solo para debug puntual.
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-ALLOWED_HOSTS = ['*']
+# CORS / CSRF
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv(), default=[])
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=Csv(), default=[])
 
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv())
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=Csv())
-
-# Base de datos (sin cambios)
+# DB (mismo patrón que base/local/prod)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -23,7 +23,6 @@ DATABASES = {
 
 # ===== AWS S3 - DEV =====
 AWS_STORAGE_BUCKET_NAME = "evolve-backend-dev"
-AWS_QUERYSTRING_AUTH = False  # URLs públicas sin firma
 
 STORAGES = {
     "default": {  # Media
@@ -43,18 +42,12 @@ STORAGES = {
 }
 
 STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/"
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
+MEDIA_URL  = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
 
-# Swagger Settings
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-        },
-    },
-    'LOGIN_URL': 'rest_framework:login',
-    'LOGOUT_URL': 'rest_framework:logout',
-}
+# Seguridad razonable en dev (HTTPS con Caddy/LE):
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Swagger solo si quieres abrirlo en dev aunque DEBUG=False
+SWAGGER_ENABLED = config('SWAGGER_ENABLED', cast=bool, default=False)
