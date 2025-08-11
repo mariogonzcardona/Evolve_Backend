@@ -1,9 +1,17 @@
 api-dev.evolvegrapplingpro.com {
-    reverse_proxy web:8000
+    reverse_proxy web:8000 {
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+        header_up Host {host}
+    }
     encode gzip
 }
 
 admin-dev.evolvegrapplingpro.com {
-    reverse_proxy web:8000
+    reverse_proxy web:8000 {
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+        header_up Host {host}
+    }
     encode gzip
 }
