@@ -4,4 +4,5 @@ from .views import *
 urlpatterns = [
     # Paths del Core
     path('',home,name='home'),
+    path("health/", health, name="health"),
 ]

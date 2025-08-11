@@ -63,10 +63,11 @@ jobs:
 
       - name: Health check (with retries)
         run: |
-          URL="https://api-dev.evolvegrapplingpro.com/"
+          URL="https://api-dev.evolvegrapplingpro.com/health/"   # o "/" si prefieres
           for i in {1..12}; do
             echo "Checking $URL (try $i/12)..."
-            if curl -fsS "$URL" > /dev/null; then
+            code=$(curl -sSL -o /dev/null -w "%{http_code}" -I "$URL" || echo 000)
+            if [ "$code" = "200" ]; then
               echo "Health OK ✅"
               exit 0
             fi
