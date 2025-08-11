@@ -29,7 +29,4 @@ END
 >&2 echo '✅ PostgreSQL está disponible'
 
 # Ejecutar el script de inicio
-/code/start.sh
-
-# Ejecutar el comando que se pase en docker-compose o por defecto
-exec "$@"
+exec /code/start.sh
