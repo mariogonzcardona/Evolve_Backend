@@ -34,39 +34,36 @@ jobs:
           REQ_CHANGED: ${{ steps.changes.outputs.req_changed }}
           STATIC_CHANGED: ${{ steps.changes.outputs.static_changed }}
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST_DEV }} << 'EOF'
-          set -e
-
-          # Seleccionar docker-compose clásico o plugin nuevo
-          if command -v docker-compose >/dev/null 2>&1; then
-            DC="docker-compose"
-          else
-            DC="docker compose"
-          fi
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST_DEV }} \
+            REQ_CHANGED="${REQ_CHANGED}" \
+            STATIC_CHANGED="${STATIC_CHANGED}" \
+            'bash -s' << 'EOF'
+          set -euo pipefail
 
           cd ${{ secrets.PROJECT_PATH_DEV }}
+
           git fetch --all
           git reset --hard origin/dev
 
-          if [ "$REQ_CHANGED" = "true" ]; then
+          if [ "${REQ_CHANGED}" = "true" ]; then
             echo "🔧 Cambios en requirements/Dockerfile: reconstruyendo imagen..."
-            \$DC build web
+            docker-compose build web
           else
             echo "⏭️ Sin cambios de imagen: no se reconstruye."
           fi
 
-          # Overrides para esta recreación (start.sh usará estos flags)
+          # Flags para esta recreación (start.sh los leerá)
           export RUN_MIGRATIONS=true
           export RUN_COLLECTSTATIC=${STATIC_CHANGED}
           export RUN_FIXTURES=${RUN_FIXTURES:-false}
 
-          # Re-crear SOLO web (sin tumbar deps como db o caddy)
-          \$DC up -d --force-recreate --no-deps web
+          # Re-crear SOLO el servicio web (sin tumbar db/caddy)
+          docker-compose up -d --force-recreate --no-deps web
           EOF
 
       - name: Health check
         run: |
-          # Ajusta la URL si tu health endpoint es distinto
+          # Ajusta la URL si tu endpoint es distinto
           curl -fsS https://api-dev.evolvegrapplingpro.com/health/ || (echo "Health check failed" && exit 1)
 
       - name: Notify deployment success
