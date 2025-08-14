@@ -22,7 +22,7 @@ DATABASES = {
 }
 
 # ===== AWS S3 - DEV =====
-AWS_STORAGE_BUCKET_NAME = "evolve-backend-dev"
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 
 STORAGES = {
     "default": {  # Media

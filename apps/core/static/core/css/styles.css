@@ -112,3 +112,10 @@ legend {
     font-size: 2rem;
     color: white;
 }
+
+.ver-todas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}

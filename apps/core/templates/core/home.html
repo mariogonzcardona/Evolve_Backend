@@ -27,10 +27,15 @@
         <form class="form" action="">
             <!-- Django Production -->
             <fieldset>
-                <legend> Django Production </legend>
+                <legend>Django Production</legend>
                 <div class="ver-todas">
-                    <a href="{% url 'schema-swagger-ui' %}" target="_blank" class="boton boton-azul">Docs Swagger</a>
-                    <a href="/admin/" target="_blank" class="boton boton-azul">Admin Django</a>
+                    {% url 'schema-swagger-ui' as swagger_url %}
+                    {% if swagger_url %}
+                        <a href="{{ swagger_url }}" class="boton boton-azul">Docs Swagger</a>
+                        <a href="/admin/"  class="boton boton-azul">Admin Django</a>
+                    {% else %}
+                        <a href="/admin/" class="boton boton-azul">Admin Django</a>
+                    {% endif %}
                 </div>
             </fieldset>
         </form>

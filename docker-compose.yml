@@ -15,7 +15,9 @@ services:
       - RUN_COLLECTSTATIC=${RUN_COLLECTSTATIC}
       - RUN_FIXTURES=${RUN_FIXTURES}
     volumes:
-      - .:/code
+      - ./apps:/code/apps
+      - ./config:/code/config
+      - ./manage.py:/code/manage.py
     ports:
       - "8000"
     depends_on:

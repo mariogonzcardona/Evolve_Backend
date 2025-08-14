@@ -16,7 +16,7 @@ DATABASES = {
     }
 }
 
-AWS_STORAGE_BUCKET_NAME = "evolve-backend-prod"
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 # AWS_S3_REGION_NAME ya viene de base.py
 
 STORAGES = {

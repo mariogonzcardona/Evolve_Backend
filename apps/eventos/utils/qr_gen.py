@@ -50,7 +50,7 @@ def generar_qr_personalizado(token_obj,nombre_asistente,email_asistente):
     in_mem_file.seek(0)
 
     # Nombre de archivo en el bucket
-    filename = f"media/boletos_qr/qr_{filename_uid}_{token_obj.token}.png"
+    filename = f"boletos_qr/qr_{filename_uid}_{token_obj.token}.png"
 
     # Usar default_storage (django-storages → S3)
     file_content = ContentFile(in_mem_file.read())
