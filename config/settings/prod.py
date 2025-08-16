@@ -1,6 +1,22 @@
 # prod.py
 from .base import *
 from decouple import config, Csv
+from corsheaders.defaults import default_headers
+
+# CORS
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv())
+
+# Si envías cookies/tokens entre frontend y backend
+CORS_ALLOW_CREDENTIALS = True  
+
+# Permitir headers extra que envíe el frontend
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+    'content-type',
+]
+
+# CSRF (para POST desde otro dominio con cookie/session)
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=Csv())
 
 DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
